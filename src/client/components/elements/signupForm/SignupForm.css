@@ -1,0 +1,11 @@
+@import '../../../../styles/variables.css';
+
+.SignupForm {
+  padding: 1rem;
+
+  &-Title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+}
