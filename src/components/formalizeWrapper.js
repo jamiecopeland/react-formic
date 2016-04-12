@@ -43,7 +43,8 @@ export function formalize(config) {
                 if (event.target.type === 'checkbox') {
                   setFormFieldValue(fieldName, 'checked', event.target.checked);
                 } else {
-                  setFormFieldValue(fieldName, 'value', event.target.value);
+                  const rawValue = event.target.value;
+                  setFormFieldValue(fieldName, 'value', field.valueInterceptor ? field.valueInterceptor(rawValue) : rawValue);
                 }
               }
             );
