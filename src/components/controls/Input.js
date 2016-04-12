@@ -6,7 +6,7 @@ import { VALID, INVALID, PENDING } from '../../constants/validationStates';
 const Input = (props, { formalizer }) => {
   const { fieldName, className, type, value } = props;
   const field = formalizer.fields[fieldName];
-
+  console.log('field.value: ', field.value);
   let proxyProps;
 
   if (field) {
@@ -18,6 +18,7 @@ const Input = (props, { formalizer }) => {
         valid: field.validity === VALID,
       }),
       onChange: event => {
+        event.persist();
         field.onChange(event);
       },
     };
@@ -26,20 +27,31 @@ const Input = (props, { formalizer }) => {
       case 'radio':
         proxyProps.checked = field.value === value;
         break;
+
+      case 'checkbox':
+        proxyProps.checked = field.checked || false;
+        break;
+
       default:
         // Value defaults to an empty string to avoid an uncontrolled to controlled input warning.
         // See documentation: http://facebook.github.io/react/docs/forms.html#controlled-components
         proxyProps.value = field.value || '';
     }
   } else {
-    console.warn('Formalizer - Input has no corresponding field: ', fieldName); // eslint-disable-line
+    // TODO Add nicer message about where to add field
+    console.warn(`Formalizer - Input component has no corresponding field: ${fieldName}`); // eslint-disable-line
+
     // Pass down inherited props to ensure styling works even if no field is available
     proxyProps = {
       ...props,
     };
   }
 
-  return (<input {...proxyProps} />);
+
+
+  return (
+    <input {...proxyProps} />
+  );
 };
 
 Input.contextTypes = {
@@ -47,7 +59,7 @@ Input.contextTypes = {
 };
 
 Input.propTypes = {
-  checked: React.PropTypes.bool,
+  // checked: React.PropTypes.bool,
   className: React.PropTypes.string,
   fieldName: React.PropTypes.string,
   type: React.PropTypes.string,

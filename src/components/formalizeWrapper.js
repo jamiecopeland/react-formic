@@ -37,21 +37,33 @@ export function formalize(config) {
             const field = config.fields[fieldName];
             const rawChangeFunctionSubject = FuncSubject.create();
 
-            const rawValueStream = rawChangeFunctionSubject
-              .map(event => event.target.value);
+            // const rawValueStream = rawChangeFunctionSubject
+            //   .map(event => event.target.value);
 
             // If the field has a createValueStream method use that,
             // otherwise default to the raw value
-            const valueStream = field.createValueStream
-              ? field.createValueStream(rawChangeFunctionSubject)
-              : rawValueStream;
 
-            this.valueStreamSubscriptions.push(
-              valueStream.subscribe(value => setFormFieldValue(fieldName, 'value', value))
+            // const valueStream = field.createValueStream
+            //   ? field.createValueStream(rawChangeFunctionSubject)
+            //   : rawValueStream;
+            //  .push(
+            //   valueStream.subscribe(value => setFormFieldValue(fieldName, 'value', value))
+            // );
+
+
+            rawChangeFunctionSubject.subscribe(
+              event => {
+                if (event.target.type === 'checkbox') {
+                  setFormFieldValue(fieldName, 'checked', event.target.checked);
+                } else {
+                  setFormFieldValue(fieldName, 'value', event.target.value);
+                }
+              }
             );
 
-            if (field.createValidationStream) {
-              field.createValidationStream(valueStream).subscribe((output) => {
+
+            if (field.createOutputStream) {
+              field.createOutputStream(rawChangeFunctionSubject).subscribe((output) => {
                 setFormFieldValue(fieldName, 'validity', output.validity);
                 setFormFieldValue(fieldName, 'validityWarning', output.validity === VALID
                   ? undefined
@@ -59,7 +71,7 @@ export function formalize(config) {
                 );
               });
             } else {
-              console.warn('Formalizer - createValidationStream is missing for field: ', fieldName)
+              console.warn('Formalizer - createOutputStream is missing for field: ', fieldName); // eslint-disable-line
             }
 
             return {
@@ -88,14 +100,17 @@ export function formalize(config) {
           fields: Object.keys(this.superConfig.fields).reduce((acc, fieldName) => {
             const field = this.superConfig.fields[fieldName];
             const validityWarning = getFormFieldValue(fieldName, 'validityWarning');
+
             const newAcc = {
               ...acc,
               [fieldName]: {
+                checked: getFormFieldValue(fieldName, 'checked'),
                 value: getFormFieldValue(fieldName, 'value'),
                 validity: getFormFieldValue(fieldName, 'validity'),
                 onChange: field.onChange,
               },
             };
+
 
             if (validityWarning) {
               newAcc[fieldName].validityWarning = validityWarning;

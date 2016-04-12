@@ -4,7 +4,8 @@ const ErrorMessage = ({ fieldName }, { formalizer }) => {
   const field = formalizer.fields[fieldName];
 
   if (!field) {
-    console.warn('Formalizer - ErrorMessage has no corresponding field: ', fieldName); // eslint-disable-line
+    // TODO Add nicer message about where to add field
+    console.warn(`Formalizer - ErrorMessage component has no corresponding field: ${fieldName}`); // eslint-disable-line
   }
 
   return (
