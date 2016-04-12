@@ -6,7 +6,7 @@ import { VALID, INVALID, PENDING } from '../../constants/validationStates';
 const Input = (props, { formalizer }) => {
   const { fieldName, className, type, value } = props;
   const field = formalizer.fields[fieldName];
-  console.log('field.value: ', field.value);
+
   let proxyProps;
 
   if (field) {
