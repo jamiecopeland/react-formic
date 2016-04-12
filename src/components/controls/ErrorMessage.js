@@ -3,8 +3,12 @@ import React from 'react';
 const ErrorMessage = ({ fieldName }, { formalizer }) => {
   const field = formalizer.fields[fieldName];
 
+  if (!field) {
+    console.warn('Formalizer - ErrorMessage has no corresponding field: ', fieldName); // eslint-disable-line
+  }
+
   return (
-    field.errorMessageLabel
+    field && field.errorMessageLabel
     ? field.errorMessageLabel
     : <span />
   );
