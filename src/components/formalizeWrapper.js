@@ -33,6 +33,7 @@ export function formalize(config) {
 
         this.superConfig = {
           fields: Object.keys(config.fields).reduce((acc, fieldName) => {
+            const field = config.fields[fieldName];
             const rawChangeFunctionSubject = FuncSubject.create();
 
             const rawValueStream = rawChangeFunctionSubject
@@ -40,15 +41,15 @@ export function formalize(config) {
 
             // If the field has a createValueStream method use that,
             // otherwise default to the raw value
-            const valueStream = config.fields[fieldName].createValueStream
-              ? config.fields[fieldName].createValueStream(rawValueStream)
+            const valueStream = field.createValueStream
+              ? field.createValueStream(rawChangeFunctionSubject)
               : rawValueStream;
 
             this.valueStreamSubscriptions.push(
               valueStream.subscribe(value => setFormFieldValue(fieldName, 'value', value))
             );
 
-            config.fields[fieldName].createValidationStream(valueStream).subscribe((output) => {
+            field.createValidationStream(valueStream).subscribe((output) => {
               setFormFieldValue(fieldName, 'validity', output.validity);
               setFormFieldValue(fieldName, 'validityWarning', output.validity === VALID
                 ? undefined
