@@ -32,6 +32,7 @@ export function formalize(config) {
         const { setFormFieldValue } = this.props;
 
         this.superConfig = {
+          // Switch this over to normal reduce
           fields: Object.keys(config.fields).reduce((acc, fieldName) => {
             const field = config.fields[fieldName];
             const rawChangeFunctionSubject = FuncSubject.create();
@@ -49,13 +50,17 @@ export function formalize(config) {
               valueStream.subscribe(value => setFormFieldValue(fieldName, 'value', value))
             );
 
-            field.createValidationStream(valueStream).subscribe((output) => {
-              setFormFieldValue(fieldName, 'validity', output.validity);
-              setFormFieldValue(fieldName, 'validityWarning', output.validity === VALID
-                ? undefined
-                : output.validityWarning
-              );
-            });
+            if (field.createValidationStream) {
+              field.createValidationStream(valueStream).subscribe((output) => {
+                setFormFieldValue(fieldName, 'validity', output.validity);
+                setFormFieldValue(fieldName, 'validityWarning', output.validity === VALID
+                  ? undefined
+                  : output.validityWarning
+                );
+              });
+            } else {
+              console.warn('Formalizer - createValidationStream is missing for field: ', fieldName)
+            }
 
             return {
               ...acc,
