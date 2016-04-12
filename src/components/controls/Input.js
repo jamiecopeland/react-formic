@@ -24,7 +24,9 @@ const Input = (props, { formalizer }) => {
       proxyProps.checked = field.value === value;
       break;
     default:
-      proxyProps.value = field.value;
+      // Value defaults to an empty string to avoid an uncontrolled to controlled input warning.
+      // See documentation: http://facebook.github.io/react/docs/forms.html#controlled-components
+      proxyProps.value = field.value || '';
   }
 
   return (<input {...proxyProps} />);
