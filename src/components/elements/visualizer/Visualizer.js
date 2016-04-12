@@ -44,7 +44,13 @@ function cleanValue(value) {
   let output;
 
   if (value) {
-    output = value === true ? 'true' : value;
+    if (value === true) {
+      output = 'true';
+    } else if (typeof value === 'string'){
+      output = `"${value}"`;
+    } else {
+      output = value;
+    }
   } else if (value === false) {
     output = 'false';
   } else if (value === undefined) {
