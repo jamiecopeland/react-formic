@@ -11,7 +11,7 @@ const ErrorMessage = ({ fieldName }, { formalizer }) => {
   return (
     field && field.errorMessageLabel
     ? field.errorMessageLabel
-    : <span />
+    : null
   );
 };
 
