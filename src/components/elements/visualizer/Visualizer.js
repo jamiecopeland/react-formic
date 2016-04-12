@@ -37,14 +37,16 @@ const propertyNameCellStyle = {
   ...cellStyle,
 };
 
-const propertyNames = ['value', 'validity', 'validityWarning'];
+const propertyNames = ['value', 'checked', 'validity', 'validityWarning'];
 
 
 function cleanValue(value) {
   let output;
 
-  if (!!value) {
-    output = value;
+  if (value) {
+    output = value === true ? 'true' : value;
+  } else if (value === false) {
+    output = 'false';
   } else if (value === undefined) {
     output = 'undefined';
   } else if (value === null) {
