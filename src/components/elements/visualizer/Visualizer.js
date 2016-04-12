@@ -46,7 +46,7 @@ function cleanValue(value) {
   if (value) {
     if (value === true) {
       output = 'true';
-    } else if (typeof value === 'string'){
+    } else if (typeof value === 'string') {
       output = `"${value}"`;
     } else {
       output = value;
@@ -83,7 +83,9 @@ const Visualizer = (props, { formalizer }) => (
                 </tr>,
               ])
               .concat(
-                propertyNames.map(key => {
+                propertyNames
+                .filter(key => field[key] !== undefined)
+                .map(key => {
                   const value = field[key];
                   return (
                     <tr key={key}>
