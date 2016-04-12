@@ -63,27 +63,31 @@ const Visualizer = (props, { formalizer }) => (
         </tr>
       </thead>
       <tbody>
-        {reduceObject(formalizer.fields, (acc, field, fieldName) => {
-          acc.push(
-            <tr key={fieldName}>
-              <td colSpan="2" style={fieldTitleCellStyle}>
-                <strong>{fieldName}</strong>
-              </td>
-            </tr>
-          );
-
-          return acc.concat(
-            propertyNames.map(key => {
-              const value = field[key];
-              return (
-                <tr key={key}>
-                  <td style={propertyNameCellStyle}>{key}</td>
-                  <td style={valueCellStyle}>{cleanValue(value)}</td>
-                </tr>
-              );
-            })
-          );
-        }, [])}
+        {
+          reduceObject(
+            formalizer.fields,
+            (acc, field, fieldName) => acc
+              .concat([
+                <tr key={fieldName}>
+                  <td colSpan="2" style={fieldTitleCellStyle}>
+                    <strong>{fieldName}</strong>
+                  </td>
+                </tr>,
+              ])
+              .concat(
+                propertyNames.map(key => {
+                  const value = field[key];
+                  return (
+                    <tr key={key}>
+                      <td style={propertyNameCellStyle}>{key}</td>
+                      <td style={valueCellStyle}>{cleanValue(value)}</td>
+                    </tr>
+                  );
+                })
+              ),
+            []
+          )
+        }
       </tbody>
     </table>
   </div>
