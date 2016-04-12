@@ -31,10 +31,12 @@ const fieldTitleCellStyle = {
 
 const valueCellStyle = {
   ...cellStyle,
+  borderBottom: 'solid 1px #DDD',
 };
 
 const propertyNameCellStyle = {
   ...cellStyle,
+  borderBottom: 'solid 1px #DDD',
 };
 
 const propertyNames = ['value', 'checked', 'validity', 'validityWarning'];
