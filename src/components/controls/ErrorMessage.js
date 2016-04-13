@@ -1,6 +1,8 @@
 import React from 'react';
 
-const ErrorMessage = ({ fieldName }, { formalizer }) => {
+import { INVALID } from '../../constants/validationStates';
+
+const ErrorMessage = ({ fieldName, type }, { formalizer }) => {
   const field = formalizer.fields[fieldName];
 
   if (!field) {
@@ -8,9 +10,15 @@ const ErrorMessage = ({ fieldName }, { formalizer }) => {
     console.warn(`Formalizer - ErrorMessage component has no corresponding field: ${fieldName}`); // eslint-disable-line
   }
 
+  const ErrorLabel = formalizer.errorLabelMap[type];
+
+  if (!ErrorLabel) {
+    console.warn(`Formalizer - ErrorMessage can't find error message label component matching key: ${type}`); // eslint-disable-line
+  }
+
   return (
-    field && field.errorMessageLabel
-    ? field.errorMessageLabel
+    field && field.validity === INVALID && field.validityWarning && ErrorLabel
+    ? <ErrorLabel message={field.validityWarning} />
     : null
   );
 };
@@ -20,7 +28,8 @@ ErrorMessage.contextTypes = {
 };
 
 ErrorMessage.propTypes = {
-  fieldName: React.PropTypes.string,
+  fieldName: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string.isRequired,
 };
 
 export default ErrorMessage;

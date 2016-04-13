@@ -30,7 +30,7 @@ export function formalize(config) {
 
       componentWillMount() {
         const { setFormFieldValue } = this.props;
-
+        console.log('wrapper willMount');
         this.superConfig = {
           // Switch this over to normal reduce
           fields: Object.keys(config.fields).reduce((acc, fieldName) => {
@@ -101,9 +101,6 @@ export function formalize(config) {
 
             if (validityWarning) {
               newAcc[fieldName].validityWarning = validityWarning;
-              if (config.createErrorMessageLabel) {
-                newAcc[fieldName].errorMessageLabel = config.createErrorMessageLabel(validityWarning); // eslint-disable-line
-              }
             }
 
             return newAcc;
@@ -112,6 +109,7 @@ export function formalize(config) {
             return getFormFieldValue(fieldName, 'validity') === VALID && acc === VALID
             ? VALID : INVALID;
           }, VALID),
+          errorLabelMap: config.errorLabelMap,
         };
 
         this.formalizerObject = formalizerObject;
