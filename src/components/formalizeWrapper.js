@@ -1,8 +1,21 @@
 import React from 'react';
 import { FuncSubject } from 'rx-react';
+import { curry } from 'ramda';
+
 import { VALID, INVALID } from '../constants/validationStates';
+import { mapObjectToObject } from '../utils/objectUtils';
+
+function upsert(list, createItem, key) {
+  let item = list[key];
+  if (!item) {
+    item = list[key] = FuncSubject.create();
+  }
+  return item;
+}
 
 export function formalize(config) {
+  const streams = {};
+
   return ComponentToWrap => {
     class FormalizeComponent extends React.Component {
 
@@ -15,25 +28,31 @@ export function formalize(config) {
         getFormalizerField: React.PropTypes.func,
       }
 
-      constructor(props) {
-        super(props);
-
-        // this.persistenceFunction = setFormFieldValue
-        this.valueStreamSubscriptions = [];
-      }
-
       getChildContext() {
         return {
           getFormalizerField: this.getFormalizerField,
         };
       }
 
-
-
       componentWillMount() {
-        const { setFormFieldValue } = this.props;
-        console.log('wrapper willMount');
+        const getValueStream = curry(upsert)(streams, () => FuncSubject.create);
+        const validation$ = config.createValidationStream(getValueStream);
 
+        const { setFormFieldValue } = this.props;
+
+        validation$.subscribe(
+          data => {
+            this.setState({
+              validation: data,
+            });
+          }
+        );
+
+        streams.email('adsf@asf.com');
+
+        // this.subjectStreams = mapObjectToObject(streams, (value, key) => {
+        //   console.log(key);
+        // });
 
         // this.superConfig = {
         //   // Switch this over to normal reduce
@@ -86,12 +105,19 @@ export function formalize(config) {
       }
 
       getFormalizerField = (fieldName) => {
+        // const field = this.state.validation.fields[fieldName];
+        // const stream = streams[fieldName];
+
         return {
-          value: `hello ${fieldName}`,
-          validity: INVALID,
-          validityMessage: `You did a bad ${fieldName}!`,
-          onChange: value => { console.log('heard value change: ', value); },
+          ...this.state.validation.fields[fieldName],
+          onChange: streams[fieldName],
         };
+        // return {
+        //   value: `hello ${fieldName}`,
+        //   validity: INVALID,
+        //   validityMessage: `You did a bad ${fieldName}!`,
+        //   onChange: value => { console.log('heard value change: ', value); },
+        // };
       }
 
       repopulateFormalizerObject(props) {
@@ -129,7 +155,12 @@ export function formalize(config) {
       }
 
       render() {
-        return (<ComponentToWrap formalizer={this.formalizerObject} />);
+        return (
+          <div>
+            <ComponentToWrap formalizer={this.state.validation} />
+            }
+          </div>
+        );
       }
     }
 
