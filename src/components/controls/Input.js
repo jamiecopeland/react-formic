@@ -1,11 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import connectControl from '../connectControl';
 import { VALID, INVALID, PENDING } from '../../constants/validationStates';
+import { CHECKED, UNCHECKED } from '../../constants/checkboxStates';
 
-const Input = (props, { formalizer }) => {
-  const { fieldName, className, type, value } = props;
-  const field = formalizer.fields[fieldName];
+const Input = (props) => {
+  const { fieldName, className, type, value, getFormalizerField } = props;
+  const field = getFormalizerField(fieldName);
 
   let proxyProps;
 
@@ -18,8 +20,16 @@ const Input = (props, { formalizer }) => {
         valid: field.validity === VALID,
       }),
       onChange: event => {
-        event.persist();
-        field.onChange(event);
+        switch (type) {
+          case 'radio':
+            field.onChange(value);
+            break;
+          case 'checkbox':
+            field.onChange(event.target.checked ? CHECKED : UNCHECKED);
+            break;
+          default:
+            field.onChange(event.target.value);
+        }
       },
     };
 
@@ -47,23 +57,17 @@ const Input = (props, { formalizer }) => {
     };
   }
 
-
-
   return (
     <input {...proxyProps} />
   );
 };
 
-Input.contextTypes = {
-  formalizer: React.PropTypes.object,
-};
-
 Input.propTypes = {
-  // checked: React.PropTypes.bool,
   className: React.PropTypes.string,
   fieldName: React.PropTypes.string,
   type: React.PropTypes.string,
   value: React.PropTypes.string,
+  getFormalizerField: React.PropTypes.func,
 };
 
-export default Input;
+export default connectControl(Input);
