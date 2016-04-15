@@ -36,7 +36,6 @@ export function formalize(config) {
 
       static childContextTypes = {
         getFormalizerField: React.PropTypes.func,
-        getFormalizerErrorLabel: React.PropTypes.func,
       }
 
       constructor(props) {
@@ -47,7 +46,6 @@ export function formalize(config) {
       getChildContext() {
         return {
           getFormalizerField: this.getFormalizerField,
-          getFormalizerErrorLabel: this.getFormalizerErrorlabel,
         };
       }
 

@@ -3,8 +3,7 @@ import React, { Component } from 'react';
 export default function connectControl(WrappedComponent) {
   class ConnectControl extends Component {
     static contextTypes = {
-      getFormalizerField: React.PropTypes.func,
-      getFormalizerErrorLabel: React.PropTypes.func,
+      getFormalizerField: React.PropTypes.func
     };
 
     render() {
@@ -12,7 +11,6 @@ export default function connectControl(WrappedComponent) {
         <WrappedComponent
           {...this.props}
           getFormalizerField={this.context.getFormalizerField}
-          getFormalizerErrorLabel={this.context.getFormalizerErrorLabel}
         />
       );
     }
