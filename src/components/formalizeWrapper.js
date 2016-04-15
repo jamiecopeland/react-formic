@@ -15,7 +15,15 @@ function upsert(list, createItem, key) {
 }
 
 export function formalize(config) {
-  const streams = {};
+  const streams = config.fields.reduce((acc, fieldName) => {
+    return {
+      ...acc,
+      [fieldName]: FuncSubject.create(),
+    };
+  }, {});
+
+
+  console.log('streams: ', streams);
 
   return ComponentToWrap => {
     class FormalizeComponent extends React.Component {
@@ -43,8 +51,7 @@ export function formalize(config) {
       }
 
       componentWillMount() {
-        const getValueStream = curry(upsert)(streams, () => FuncSubject.create);
-        const validation$ = config.createValidationStream(getValueStream);
+        const validation$ = config.createValidationStream(streams);
 
         this.disposeStream = streams.email.map(value => ({ email: value }))
         .scan((acc, stream) => ({ ...acc, ...stream }))
