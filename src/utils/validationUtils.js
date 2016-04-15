@@ -16,5 +16,5 @@ export function runSynchronousValidators(validators, value) {
     }
   }
 
-  return { value, validity, validityWarning: message };
+  return { value, validity, validityMessage: message };
 }
