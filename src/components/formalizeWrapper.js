@@ -1,9 +1,10 @@
 import React from 'react';
 import { FuncSubject } from 'rx-react';
 import { curry } from 'ramda';
+import { set } from 'lodash';
 
 import { VALID, INVALID } from '../constants/validationStates';
-import { mapObjectToObject } from '../utils/objectUtils';
+import { mapObjectToObject, mapObjectToArray } from '../utils/objectUtils';
 
 function upsert(list, createItem, key) {
   let item = list[key];
@@ -11,6 +12,16 @@ function upsert(list, createItem, key) {
     item = list[key] = FuncSubject.create();
   }
   return item;
+}
+
+function createEmptyValidationObject(fieldNames) {
+  return {
+    // fields: fieldNames.reduce(fieldName => ({})),
+    fields: {
+      email: {}
+    },
+    validiity: INVALID,
+  };
 }
 
 export function formalize(config) {
@@ -26,11 +37,18 @@ export function formalize(config) {
 
       static childContextTypes = {
         getFormalizerField: React.PropTypes.func,
+        getFormalizerErrorLabel: React.PropTypes.func,
+      }
+
+      constructor(props) {
+        super(props);
+        this.state = {};
       }
 
       getChildContext() {
         return {
           getFormalizerField: this.getFormalizerField,
+          getFormalizerErrorLabel: this.getFormalizerErrorlabel,
         };
       }
 
@@ -38,62 +56,26 @@ export function formalize(config) {
         const getValueStream = curry(upsert)(streams, () => FuncSubject.create);
         const validation$ = config.createValidationStream(getValueStream);
 
-        const { setFormFieldValue } = this.props;
-
-        validation$.subscribe(
-          data => {
-            this.setState({
-              validation: data,
-            });
+        this.disposeStream = streams.email.map(value => ({ email: value }))
+        .scan((acc, stream) => ({ ...acc, ...stream }))
+        .map(fieldValues => ({ fieldValues }))
+        .merge(validation$.map(validation => ({ validation })))
+        .scan((acc, stream) => ({ ...acc, ...stream }))
+        .subscribe(
+          value => {
+            this.setState(value);
           }
         );
 
-        streams.email('adsf@asf.com');
+        // TODO Switch state setting over to being abstracted throught setFormFieldValue or
+        // something similar
+        // const { setFormFieldValue } = this.props;
 
-        // this.subjectStreams = mapObjectToObject(streams, (value, key) => {
-        //   console.log(key);
-        // });
-
-        // this.superConfig = {
-        //   // Switch this over to normal reduce
-        //   fields: Object.keys(config.fields).reduce((acc, fieldName) => {
-        //     const field = config.fields[fieldName];
-        //     const rawChangeStream = FuncSubject.create();
-
-        //     // Synchronously set the value or checked property for the field when it it changes
-        //     rawChangeStream.subscribe(
-        //       event => {
-        //         if (event.target.type === 'checkbox') {
-        //           setFormFieldValue(fieldName, 'checked', event.target.checked);
-        //         } else {
-        //           const rawValue = event.target.value;
-        //           setFormFieldValue(fieldName, 'value', field.valueInterceptor ? field.valueInterceptor(rawValue) : rawValue);
-        //         }
-        //       }
-        //     );
-
-        //     if (field.createValidationStream) {
-        //       field.createValidationStream(rawChangeStream).subscribe((output) => {
-        //         setFormFieldValue(fieldName, 'validity', output.validity);
-        //         setFormFieldValue(fieldName, 'validityWarning', output.validity === VALID
-        //           ? undefined
-        //           : output.validityWarning
-        //         );
-        //       });
-        //     } else {
-        //       console.warn('Formalizer - createValidationStream is missing for field: ', fieldName); // eslint-disable-line
-        //     }
-
-        //     return {
-        //       ...acc,
-        //       [fieldName]: {
-        //         onChange: rawChangeStream,
-        //       },
-        //     };
-        //   }, {}),
-        // };
-
-        // this.repopulateFormalizerObject(this.props);
+        // Create empty container objects
+        this.setState({
+          fieldValues: {},
+          validation: createEmptyValidationObject(Object.keys(streams)),
+        });
       }
 
       componentWillUpdate(nextProps) {
@@ -101,64 +83,34 @@ export function formalize(config) {
       }
 
       componentWillUnmount() {
-        this.valueStreamSubscriptions.forEach(stream => stream.dispose());
+        this.disposeStream();
       }
+
+      // setFormalizerState(formState) {
+      //   this.setState()
+      // }
+
+      // getFormalizerState(formState) {
+      //   return this.state.formalizer;
+      // }
 
       getFormalizerField = (fieldName) => {
-        // const field = this.state.validation.fields[fieldName];
-        // const stream = streams[fieldName];
-
         return {
           ...this.state.validation.fields[fieldName],
+          value: this.state.fieldValues[fieldName],
           onChange: streams[fieldName],
         };
-        // return {
-        //   value: `hello ${fieldName}`,
-        //   validity: INVALID,
-        //   validityMessage: `You did a bad ${fieldName}!`,
-        //   onChange: value => { console.log('heard value change: ', value); },
-        // };
       }
 
-      repopulateFormalizerObject(props) {
-        // const { getFormFieldValue } = props;
-        // const formalizerObject = {
-        //   fields: Object.keys(this.superConfig.fields).reduce((acc, fieldName) => {
-        //     const field = this.superConfig.fields[fieldName];
-        //     const validityWarning = getFormFieldValue(fieldName, 'validityWarning');
-
-        //     const newAcc = {
-        //       ...acc,
-        //       [fieldName]: {
-        //         checked: getFormFieldValue(fieldName, 'checked'),
-        //         value: getFormFieldValue(fieldName, 'value'),
-        //         validity: getFormFieldValue(fieldName, 'validity'),
-        //         onChange: field.onChange,
-        //       },
-        //     };
-
-
-        //     if (validityWarning) {
-        //       newAcc[fieldName].validityWarning = validityWarning;
-        //     }
-
-        //     return newAcc;
-        //   }, {}),
-        //   validity: Object.keys(this.superConfig.fields).reduce((acc, fieldName) => {
-        //     return getFormFieldValue(fieldName, 'validity') === VALID && acc === VALID
-        //     ? VALID : INVALID;
-        //   }, VALID),
-        //   errorLabelMap: config.errorLabelMap,
-        // };
-
-        // this.formalizerObject = formalizerObject;
+      getFormalizerErrorlabel = (labelName) => {
+        return config.errorLabelMap[labelName];
       }
 
       render() {
+        console.log('render: ', this.state);
         return (
           <div>
             <ComponentToWrap formalizer={this.state.validation} />
-            }
           </div>
         );
       }
