@@ -14,16 +14,6 @@ function upsert(list, createItem, key) {
   return item;
 }
 
-function createEmptyValidationObject(fieldNames) {
-  return {
-    // fields: fieldNames.reduce(fieldName => ({})),
-    fields: {
-      email: {}
-    },
-    validiity: INVALID,
-  };
-}
-
 export function formalize(config) {
   const streams = {};
 
@@ -61,43 +51,31 @@ export function formalize(config) {
         .map(fieldValues => ({ fieldValues }))
         .merge(validation$.map(validation => ({ validation })))
         .scan((acc, stream) => ({ ...acc, ...stream }))
+        .startWith({ fieldValues: {} })
         .subscribe(
-          value => {
-            this.setState(value);
+          formState => {
+            this.setFormalizerState(formState);
           }
         );
-
-        // TODO Switch state setting over to being abstracted throught setFormFieldValue or
-        // something similar
-        // const { setFormFieldValue } = this.props;
-
-        // Create empty container objects
-        this.setState({
-          fieldValues: {},
-          validation: createEmptyValidationObject(Object.keys(streams)),
-        });
-      }
-
-      componentWillUpdate(nextProps) {
-        // this.repopulateFormalizerObject(nextProps);
       }
 
       componentWillUnmount() {
         this.disposeStream();
       }
 
-      // setFormalizerState(formState) {
-      //   this.setState()
-      // }
+      setFormalizerState(formState) {
+        this.setState({ formalizer: formState });
+      }
 
-      // getFormalizerState(formState) {
-      //   return this.state.formalizer;
-      // }
+      getFormalizerState() {
+        return this.state.formalizer;
+      }
 
       getFormalizerField = (fieldName) => {
+        const formState = this.getFormalizerState();
         return {
-          ...this.state.validation.fields[fieldName],
-          value: this.state.fieldValues[fieldName],
+          ...(formState.validation ? formState.validation.fields[fieldName] : undefined),
+          value: formState.fieldValues[fieldName],
           onChange: streams[fieldName],
         };
       }
@@ -110,7 +88,7 @@ export function formalize(config) {
         console.log('render: ', this.state);
         return (
           <div>
-            <ComponentToWrap formalizer={this.state.validation} />
+            <ComponentToWrap />
           </div>
         );
       }
