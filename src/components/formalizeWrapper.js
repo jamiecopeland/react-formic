@@ -2,6 +2,7 @@ import React from 'react';
 import { FuncSubject } from 'rx-react';
 import { curry } from 'ramda';
 import { set } from 'lodash';
+import Rx from 'rx';
 
 import { VALID, INVALID } from '../constants/validationStates';
 import { mapObjectToObject, mapObjectToArray } from '../utils/objectUtils';
@@ -14,16 +15,16 @@ function upsert(list, createItem, key) {
   return item;
 }
 
+const mapValueToProperty = propertyName => value => ({ [propertyName]: value });
+const mergeValueStreams = streams => Rx.Observable
+  .merge(null, mapObjectToArray(streams, (value, key) => value.map(mapValueToProperty(key))))
+  .scan((acc, x) => ({ ...acc, ...x }));
+
 export function formalize(config) {
-  const streams = config.fields.reduce((acc, fieldName) => {
-    return {
-      ...acc,
-      [fieldName]: FuncSubject.create(),
-    };
-  }, {});
-
-
-  console.log('streams: ', streams);
+  const valueStreams = config.fields.reduce((acc, fieldName) => ({
+    ...acc,
+    [fieldName]: FuncSubject.create(),
+  }), {});
 
   return ComponentToWrap => {
     class FormalizeComponent extends React.Component {
@@ -51,10 +52,9 @@ export function formalize(config) {
       }
 
       componentWillMount() {
-        const validation$ = config.createValidationStream(streams);
+        const validation$ = config.createValidationStream(valueStreams);
 
-        this.disposeStream = streams.email.map(value => ({ email: value }))
-        .scan((acc, stream) => ({ ...acc, ...stream }))
+        this.disposeStream = mergeValueStreams(valueStreams)
         .map(fieldValues => ({ fieldValues }))
         .merge(validation$.map(validation => ({ validation })))
         .scan((acc, stream) => ({ ...acc, ...stream }))
@@ -83,7 +83,7 @@ export function formalize(config) {
         return {
           ...(formState.validation ? formState.validation.fields[fieldName] : undefined),
           value: formState.fieldValues[fieldName],
-          onChange: streams[fieldName],
+          onChange: valueStreams[fieldName],
         };
       }
 
@@ -92,7 +92,6 @@ export function formalize(config) {
       }
 
       render() {
-        console.log('render: ', this.state);
         return (
           <div>
             <ComponentToWrap />
