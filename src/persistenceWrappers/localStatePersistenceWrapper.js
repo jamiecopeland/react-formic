@@ -1,35 +1,25 @@
 import React, { Component } from 'react';
 
+import { INITIAL_FORM_STATE } from '../components/formalizeWrapper';
+
 export const wrap = FormComponent => {
   class LocalStatePersistenceWrapper extends Component {
 
     constructor(props) {
       super(props);
-      this.state = {};
+      this.state = INITIAL_FORM_STATE;
     }
 
-    getFormFieldValue = (fieldName, propertyName) => {
-      const field = this.state[fieldName];
-      return field ? field[propertyName] : undefined;
-    }
+    getFormalizerState = () => this.state
 
-    setFormFieldValue = (fieldName, propertyName, value) => {
-      const field = this.state[fieldName] || {};
-
-      this.setState({
-        [fieldName]: {
-          ...field,
-          [propertyName]: value,
-        },
-      });
-    }
+    setFormalizerState = state => this.setState(state)
 
     render() {
       return (
         <FormComponent
           {...this.props}
-          getFormFieldValue={this.getFormFieldValue}
-          setFormFieldValue={this.setFormFieldValue}
+          getFormalizerState={this.getFormalizerState}
+          setFormalizerState={this.setFormalizerState}
         />
       );
     }

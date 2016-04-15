@@ -1,24 +1,18 @@
 import React from 'react';
 import { FuncSubject } from 'rx-react';
-import { curry } from 'ramda';
-import { set } from 'lodash';
 import Rx from 'rx';
 
-import { VALID, INVALID } from '../constants/validationStates';
-import { mapObjectToObject, mapObjectToArray } from '../utils/objectUtils';
-
-function upsert(list, createItem, key) {
-  let item = list[key];
-  if (!item) {
-    item = list[key] = FuncSubject.create();
-  }
-  return item;
-}
+import { mapObjectToArray } from '../utils/objectUtils';
 
 const mapValueToProperty = propertyName => value => ({ [propertyName]: value });
 const mergeValueStreams = streams => Rx.Observable
   .merge(null, mapObjectToArray(streams, (value, key) => value.map(mapValueToProperty(key))))
   .scan((acc, x) => ({ ...acc, ...x }));
+
+export const INITIAL_FORM_STATE = {
+  fieldValues: {},
+  validation: { fields: {} },
+};
 
 export function formalize(config) {
   const valueStreams = config.fields.reduce((acc, fieldName) => ({
@@ -30,17 +24,12 @@ export function formalize(config) {
     class FormalizeComponent extends React.Component {
 
       static propTypes = {
-        setFormFieldValue: React.PropTypes.func,
-        getFormFieldValue: React.PropTypes.func,
+        setFormalizerState: React.PropTypes.func,
+        getFormalizerState: React.PropTypes.func,
       };
 
       static childContextTypes = {
         getFormalizerField: React.PropTypes.func,
-      }
-
-      constructor(props) {
-        super(props);
-        this.state = {};
       }
 
       getChildContext() {
@@ -50,47 +39,35 @@ export function formalize(config) {
       }
 
       componentWillMount() {
-        const validation$ = config.createValidationStream(valueStreams);
-
-        this.disposeStream = mergeValueStreams(valueStreams)
+        this.validation$ = mergeValueStreams(valueStreams)
         .map(fieldValues => ({ fieldValues }))
-        .merge(validation$.map(validation => ({ validation })))
+        .merge(config.createValidationStream(valueStreams).map(validation => ({ validation })))
         .scan((acc, stream) => ({ ...acc, ...stream }))
-        .startWith({ fieldValues: {} })
-        .subscribe(formState => this.setFormalizerState(formState));
+        // Ensure validation is always populated with an empty object to prevent a conditional
+        // being needed in getFormalizerField which is called very frequently by inputs via context.
+        .map(formState => ({
+          ...formState,
+          validation: formState.validation || INITIAL_FORM_STATE.validation,
+        }))
+        .subscribe(formState => this.props.setFormalizerState(formState));
       }
 
       componentWillUnmount() {
-        // if (this.disposeStream) this.disposeStream();
-      }
-
-      setFormalizerState(formState) {
-        this.setState({ formalizer: formState });
-      }
-
-      getFormalizerState() {
-        return this.state.formalizer;
+        this.validation$.dispose();
       }
 
       getFormalizerField = (fieldName) => {
-        const formState = this.getFormalizerState();
+        const formState = this.props.getFormalizerState();
         return {
-          ...(formState.validation ? formState.validation.fields[fieldName] : undefined),
+          ...formState.validation.fields[fieldName],
           value: formState.fieldValues[fieldName],
+          // validation: formState.validation.fields[fieldName],
           onChange: valueStreams[fieldName],
         };
       }
 
-      getFormalizerErrorlabel = (labelName) => {
-        return config.errorLabelMap[labelName];
-      }
-
       render() {
-        return (
-          <div>
-            <ComponentToWrap />
-          </div>
-        );
+        return <ComponentToWrap />;
       }
     }
 

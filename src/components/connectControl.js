@@ -1,20 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 export default function connectControl(WrappedComponent) {
-  class ConnectControl extends Component {
-    static contextTypes = {
-      getFormalizerField: React.PropTypes.func
-    };
+  const ConnectControl = (props, { getFormalizerField }) => (
+    <WrappedComponent {...props} getFormalizerField={getFormalizerField} />
+  );
 
-    render() {
-      return (
-        <WrappedComponent
-          {...this.props}
-          getFormalizerField={this.context.getFormalizerField}
-        />
-      );
-    }
-  }
+  ConnectControl.contextTypes = {
+    getFormalizerField: React.PropTypes.func,
+  };
 
   return ConnectControl;
 }
