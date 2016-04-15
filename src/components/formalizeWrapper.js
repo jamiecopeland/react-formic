@@ -57,15 +57,11 @@ export function formalize(config) {
         .merge(validation$.map(validation => ({ validation })))
         .scan((acc, stream) => ({ ...acc, ...stream }))
         .startWith({ fieldValues: {} })
-        .subscribe(
-          formState => {
-            this.setFormalizerState(formState);
-          }
-        );
+        .subscribe(formState => this.setFormalizerState(formState));
       }
 
       componentWillUnmount() {
-        this.disposeStream();
+        // if (this.disposeStream) this.disposeStream();
       }
 
       setFormalizerState(formState) {
