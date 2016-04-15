@@ -26,6 +26,7 @@ export function formalize(config) {
       static propTypes = {
         setFormalizerState: React.PropTypes.func,
         getFormalizerState: React.PropTypes.func,
+        initializeForm: React.PropTypes.func,
       };
 
       static childContextTypes = {
@@ -39,6 +40,9 @@ export function formalize(config) {
       }
 
       componentWillMount() {
+        // TODO Find a nicer, more universal way of doing this
+        this.props.initializeForm();
+
         this.validation$ = mergeValueStreams(valueStreams)
         .map(fieldValues => ({ fieldValues }))
         .merge(config.createValidationStream(valueStreams).map(validation => ({ validation })))
