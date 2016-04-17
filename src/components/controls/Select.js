@@ -1,28 +1,27 @@
 import React from 'react';
 
-// import classNames from 'classnames';
-// import { VALID, INVALID, PENDING } from '../../constants/validationStates';
+import connectControl from '../connectControl';
 
-const Input = (props, { formalizer }) => {
-  const { children, fieldName } = props;
-  const field = formalizer.fields[fieldName];
+const Select = props => {
+  const { children } = props;
+  const { field: { value, onChange } } = props;
 
   return (
-    <select {...props} value={field.value} onChange={field.onChange}>
+    <select {...props} value={value} onChange={event => onChange(event.target.value)}>
       {children}
     </select>
   );
 };
 
-Input.contextTypes = {
+Select.contextTypes = {
   formalizer: React.PropTypes.object,
 };
 
-Input.propTypes = {
+Select.propTypes = {
   children: React.PropTypes.node, // TODO check this type is correct for <option />
   className: React.PropTypes.string,
-  fieldName: React.PropTypes.string,
+  field: React.PropTypes.object,
   value: React.PropTypes.string,
 };
 
-export default Input;
+export default connectControl(field => ({ field }))(Select);

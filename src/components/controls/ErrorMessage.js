@@ -19,7 +19,6 @@ const ErrorMessage = ({ field, component: WrappedComponent }) => {
 ErrorMessage.propTypes = {
   field: React.PropTypes.object.isRequired,
   component: React.PropTypes.func.isRequired,
-  getFormalizerField: React.PropTypes.func.isRequired,
 };
 
 export default connectControl(field => ({ field }))(ErrorMessage);
