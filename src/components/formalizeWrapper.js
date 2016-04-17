@@ -1,12 +1,38 @@
 import React from 'react';
 import { FuncSubject } from 'rx-react';
 import Rx from 'rx';
+// import { merge } from 'ramda';
+import {merge} from 'lodash';
 
-import { mapObjectToArray } from '../utils/objectUtils';
+import { mapObjectToArray, mapObjectToObject } from '../utils/objectUtils';
 
 const mapValueToProperty = propertyName => value => ({ [propertyName]: value });
 const mergeValueStreams = streams => Rx.Observable
   .merge(null, mapObjectToArray(streams, (value, key) => value.map(mapValueToProperty(key))))
+  .scan((acc, x) => ({ ...acc, ...x }));
+
+/**
+ * Merges multiple value streams that output this shape data:
+ * {
+ *   email: 'darth@deathstar.com',
+ * }
+ *
+ * Into a single stream that outputs this shape data:
+ * {
+ *   email: {
+ *     value: 'darth@deathstar.com',
+ *   }
+ *   userName: {
+ *     value: 'darth1',
+ *   }
+ * }
+ */
+const mergeValueStreams2 = streams => Rx.Observable
+  .merge(null, mapObjectToArray(streams, (stream, key) => stream.map(value => ({
+    [key]: {
+      value,
+    },
+  }))))
   .scan((acc, x) => ({ ...acc, ...x }));
 
 export const INITIAL_FORM_STATE = {
@@ -54,10 +80,29 @@ export function formalize(config) {
           validation: formState.validation || INITIAL_FORM_STATE.validation,
         }))
         .subscribe(formState => this.props.setFormalizerState(formState));
+
+        // Nicer output
+        this.validation2$ = mergeValueStreams2(valueStreams)
+        .map(fields => ({ fields }))
+        .merge(config.createValidationStream(valueStreams))
+        .scan((acc, stream) => {
+          return merge({}, acc, stream);
+        })
+        .subscribe(formState => console.log('final: ', JSON.stringify(formState)));
       }
 
       componentWillUnmount() {
         this.validation$.dispose();
+      }
+
+      getFormalizerField = (fieldName) => {
+        const formState = this.props.getFormalizerState();
+        return {
+          ...formState.validation.fields[fieldName],
+          value: formState.fieldValues[fieldName],
+          // validation: formState.validation.fields[fieldName],
+          onChange: valueStreams[fieldName],
+        };
       }
 
       getFormalizerField = (fieldName) => {
