@@ -21,9 +21,7 @@ import { mapObjectToArray, mapObjectToObject } from '../utils/objectUtils';
  */
 const mergeValueStreams = streams => Rx.Observable
   .merge(null, mapObjectToArray(streams, (stream, key) => stream.map(value => ({
-    [key]: {
-      value,
-    },
+    [key]: { value },
   }))))
   .scan((acc, x) => ({ ...acc, ...x }));
 
@@ -35,6 +33,14 @@ const mergeNewStreamContent = (currentContent, newContent) => ({
     ...field,
   })),
 });
+
+const createFormStream = (config, valueStreams) => mergeValueStreams(valueStreams)
+  .map(fields => ({ fields }))
+  .merge(config.createValidationStream(valueStreams))
+  .scan((acc, stream) => mergeNewStreamContent(acc, stream));
+  // TODO: Check if startWith is necessary in both Redux and local state persistence wrappers
+  // and write note either way
+  // .startWith(INITIAL_FORM_STATE);
 
 export const INITIAL_FORM_STATE = { fields: {} };
 
@@ -67,18 +73,12 @@ export function formalize(config) {
         // TODO Find a nicer, more universal way of doing this
         this.props.initializeForm();
 
-        // TODO: Check if startWith is necessary in both Redux and local state persistence wrappers
-        // and write note either way
-        this.validation$ = mergeValueStreams(valueStreams)
-        .map(fields => ({ fields }))
-        .merge(config.createValidationStream(valueStreams))
-        .scan((acc, stream) => mergeNewStreamContent(acc, stream))
-        // .startWith(INITIAL_FORM_STATE)
+        this.form$ = createFormStream(config, valueStreams)
         .subscribe(formState => this.props.setFormalizerState(formState));
       }
 
       componentWillUnmount() {
-        this.validation$.dispose();
+        this.form$.dispose();
       }
 
       getFormalizerField = (fieldName) => {
