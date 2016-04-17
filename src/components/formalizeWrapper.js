@@ -1,8 +1,7 @@
 import React from 'react';
 import { FuncSubject } from 'rx-react';
 import Rx from 'rx';
-import { merge } from 'lodash';
-import { mapObjectToArray } from '../utils/objectUtils';
+import { mapObjectToArray, mapObjectToObject } from '../utils/objectUtils';
 
 /**
  * Merges multiple value streams that output this shape data:
@@ -20,13 +19,22 @@ import { mapObjectToArray } from '../utils/objectUtils';
  *   }
  * }
  */
-const mergeValueStreams2 = streams => Rx.Observable
+const mergeValueStreams = streams => Rx.Observable
   .merge(null, mapObjectToArray(streams, (stream, key) => stream.map(value => ({
     [key]: {
       value,
     },
   }))))
   .scan((acc, x) => ({ ...acc, ...x }));
+
+const mergeNewStreamContent = (currentContent, newContent) => ({
+  ...currentContent,
+  ...newContent,
+  fields: mapObjectToObject(newContent.fields, (field, fieldName) => ({
+    ...currentContent.fields[fieldName],
+    ...field,
+  })),
+});
 
 export const INITIAL_FORM_STATE = { fields: {} };
 
@@ -59,12 +67,13 @@ export function formalize(config) {
         // TODO Find a nicer, more universal way of doing this
         this.props.initializeForm();
 
-        // TODO: Check if startWith is necessary in both Redux and local state persistence wrappers and write note either way
-        this.validation2$ = mergeValueStreams2(valueStreams)
+        // TODO: Check if startWith is necessary in both Redux and local state persistence wrappers
+        // and write note either way
+        this.validation$ = mergeValueStreams(valueStreams)
         .map(fields => ({ fields }))
         .merge(config.createValidationStream(valueStreams))
-        .scan((acc, stream) => merge({}, acc, stream))
-        .startWith(INITIAL_FORM_STATE)
+        .scan((acc, stream) => mergeNewStreamContent(acc, stream))
+        // .startWith(INITIAL_FORM_STATE)
         .subscribe(formState => this.props.setFormalizerState(formState));
       }
 
