@@ -1,5 +1,7 @@
 import React from 'react';
-import { reduceObject } from '../../../utils/objectUtils';
+
+import connectForm from '../../connectForm';
+import { VALID, INVALID, PENDING } from '../../../constants/validationStates';
 
 const tableStyle = {
   backgroundColor: '#EFEFEF',
@@ -39,8 +41,7 @@ const propertyNameCellStyle = {
   borderBottom: 'solid 1px #DDD',
 };
 
-const propertyNames = ['value', 'checked', 'validity', 'validityWarning'];
-
+const propertyNames = ['validity', 'validityMessage', 'value'].sort();
 
 function cleanValue(value) {
   let output;
@@ -64,8 +65,14 @@ function cleanValue(value) {
   return output;
 }
 
-const Visualizer = (props, { formalizer }) => (
-  <div>
+const validityColorMap = {
+  [VALID]: '#00FF00',
+  [INVALID]: '#FF0000',
+  [PENDING]: 'yellow',
+};
+
+const Visualizer = ({ form, style }) => (
+  <div style={style}>
     <table style={tableStyle}>
       <thead>
         <tr>
@@ -74,39 +81,39 @@ const Visualizer = (props, { formalizer }) => (
       </thead>
       <tbody>
         {
-          reduceObject(
-            formalizer.fields,
-            (acc, field, fieldName) => acc
-              .concat([
-                <tr key={fieldName}>
-                  <td colSpan="2" style={fieldTitleCellStyle}>
-                    <strong>{fieldName}</strong>
-                  </td>
-                </tr>,
-              ])
-              .concat(
-                propertyNames
-                .filter(key => field[key] !== undefined)
-                .map(key => {
-                  const value = field[key];
-                  return (
-                    <tr key={key}>
-                      <td style={propertyNameCellStyle}>{key}</td>
-                      <td style={valueCellStyle}>{cleanValue(value)}</td>
-                    </tr>
-                  );
-                })
-              ),
-            []
-          )
+          Object.keys(form.fields).sort().reduce((acc, fieldName) => {
+            const field = form.fields[fieldName];
+            return acc.concat([
+              <tr key={fieldName}>
+                <td colSpan="2" style={fieldTitleCellStyle}>
+                  <strong>{fieldName}</strong>
+                </td>
+              </tr>,
+            ])
+            .concat(
+              propertyNames
+              .filter(key => field[key] !== undefined)
+              .map(key => (
+                <tr key={`${fieldName}-${key}`}>
+                  <td style={propertyNameCellStyle}>{key}</td>
+                  <td style={{
+                    ...valueCellStyle,
+                    backgroundColor: key === 'validity' ? validityColorMap[field[key]] : 'none',
+                  }}
+                  >{cleanValue(field[key])}</td>
+                </tr>
+              ))
+            );
+          }, [])
         }
       </tbody>
     </table>
   </div>
 );
 
-Visualizer.contextTypes = {
-  formalizer: React.PropTypes.object,
+Visualizer.propTypes = {
+  form: React.PropTypes.object,
+  style: React.PropTypes.object,
 };
 
-export default Visualizer;
+export default connectForm(form => ({ form }))(Visualizer);
