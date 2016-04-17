@@ -3,8 +3,8 @@ import React from 'react';
 const connectControl = mapFieldToProps => WrappedComponent => {
   const ConnectControlWrapper = (props, { getFormalizerField }) => {
     const field = getFormalizerField(props.fieldName);
-
-    if (!props.fieldName) {
+    const { fieldName } = props;
+    if (!fieldName) {
       throw new Error('Formalizer inputs require prop "fieldName"');
     }
 
@@ -16,12 +16,13 @@ const connectControl = mapFieldToProps => WrappedComponent => {
     }
 
     return (
-      <WrappedComponent {...props} {...mapFieldToProps(getFormalizerField(props.fieldName))} />
+      <WrappedComponent {...props} {...mapFieldToProps(field)} />
     );
   };
 
   ConnectControlWrapper.contextTypes = {
     getFormalizerField: React.PropTypes.func.isRequired,
+    getFormalizerForm: React.PropTypes.func.isRequired,
   };
 
   ConnectControlWrapper.propTypes = {

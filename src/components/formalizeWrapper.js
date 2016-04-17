@@ -1,8 +1,9 @@
 import React from 'react';
 import { FuncSubject } from 'rx-react';
 import Rx from 'rx';
-import { mapObjectToArray, mapObjectToObject } from '../utils/objectUtils';
 
+import { mapObjectToArray, mapObjectToObject } from '../utils/objectUtils';
+import { INVALID } from '../constants/validationStates';
 /**
  * Merges multiple value streams that output this shape data:
  * {
@@ -42,7 +43,7 @@ const createFormStream = (config, valueStreams) => mergeValueStreams(valueStream
   // and write note either way
   // .startWith(INITIAL_FORM_STATE);
 
-export const INITIAL_FORM_STATE = { fields: {} };
+export const INITIAL_FORM_STATE = { fields: {}, validity: INVALID };
 
 export function formalize(config) {
   const valueStreams = config.fields.reduce((acc, fieldName) => ({
@@ -54,6 +55,7 @@ export function formalize(config) {
     class FormalizeComponent extends React.Component {
 
       static propTypes = {
+        // TODO Rename to getFormalizerFormState
         setFormalizerState: React.PropTypes.func,
         getFormalizerState: React.PropTypes.func,
         initializeForm: React.PropTypes.func,
@@ -61,11 +63,13 @@ export function formalize(config) {
 
       static childContextTypes = {
         getFormalizerField: React.PropTypes.func,
+        getFormalizerForm: React.PropTypes.func,
       }
 
       getChildContext() {
         return {
           getFormalizerField: this.getFormalizerField,
+          getFormalizerForm: this.getFormalizerForm,
         };
       }
 
@@ -81,12 +85,22 @@ export function formalize(config) {
         this.form$.dispose();
       }
 
-      getFormalizerField = (fieldName) => {
+      getFormalizerField = fieldName => ({
+        ...this.props.getFormalizerState().fields[fieldName],
+        onChange: valueStreams[fieldName],
+      })
+
+      getFormalizerForm = includeOnChangeHandlers => {
         const formState = this.props.getFormalizerState();
-        return {
-          ...formState.fields[fieldName],
-          onChange: valueStreams[fieldName],
-        };
+        return includeOnChangeHandlers
+        ? {
+          ...formState,
+          fields: mapObjectToObject(valueStreams, (valueStream, fieldName) => ({
+            ...formState.fields[fieldName],
+            onChange: valueStream,
+          })),
+        }
+        : formState;
       }
 
       render() {
