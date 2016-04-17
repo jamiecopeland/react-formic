@@ -3,9 +3,7 @@ import React from 'react';
 import connectControl from '../connectControl';
 import { INVALID } from '../../constants/validationStates';
 
-const ErrorMessage = ({ fieldName, component: WrappedComponent, getFormalizerField }) => {
-  const field = getFormalizerField(fieldName);
-
+const ErrorMessage = ({ field, component: WrappedComponent }) => {
   if (!field) {
     // TODO Add nicer message about where to add field
     console.warn(`Formalizer - ErrorMessage component has no corresponding field: ${fieldName}`); // eslint-disable-line
@@ -19,9 +17,9 @@ const ErrorMessage = ({ fieldName, component: WrappedComponent, getFormalizerFie
 };
 
 ErrorMessage.propTypes = {
-  fieldName: React.PropTypes.string.isRequired,
+  field: React.PropTypes.object.isRequired,
   component: React.PropTypes.func.isRequired,
   getFormalizerField: React.PropTypes.func.isRequired,
 };
 
-export default connectControl(ErrorMessage);
+export default connectControl(field => ({ field }))(ErrorMessage);
