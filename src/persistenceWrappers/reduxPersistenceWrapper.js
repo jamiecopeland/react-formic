@@ -3,7 +3,7 @@ import { INITIAL_FORM_STATE } from '../components/formalizeWrapper';
 // --------------------------------------------------
 // Action creator
 
-import { createAction } from 'redux-actions';
+const createAction = type => payload => ({ type, payload });
 
 export const SET_FORMALIZER_STATE = 'formalizerActions.SET_FORMALIZER_STATE';
 export const setFormalizerState = createAction(SET_FORMALIZER_STATE);
@@ -13,9 +13,6 @@ export const initializeForm = createAction(INITIALIZE_FORM);
 
 // --------------------------------------------------
 // Reducer
-
-// import { handleActions } from 'redux-actions';
-// import { Map } from 'immutable';
 
 const defaultState = { forms: {} };
 
