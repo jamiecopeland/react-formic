@@ -1,7 +1,7 @@
 import { INITIAL_FORM_STATE } from '../components/formalizeWrapper';
 
 // --------------------------------------------------
-// Action creator
+// Action creators
 
 const createAction = type => payload => ({ type, payload });
 
@@ -42,26 +42,19 @@ export function formalizerReducer(state = defaultState, action) {
 }
 
 // --------------------------------------------------
-// Constants
-
-export const DEFAULT_BRANCH_NAME = 'formalizer';
-
-// --------------------------------------------------
 // Connect wrapper
 
 import { connect } from 'react-redux';
 
-export const createConnectWrapper = (formalizerBranchName, formName) => {
-  return connect(
-    state => ({
-      getFormalizerState: () => state.get(formalizerBranchName).forms[formName] || INITIAL_FORM_STATE // eslint-disable-line
-    }),
-    dispatch => ({
-      setFormalizerState: state => dispatch(setFormalizerState({
-        formState: state,
-        formName,
-      })),
-      initializeForm: () => dispatch(initializeForm({ formName })),
-    })
-  );
-};
+export const createConnectWrapper = (formalizerBranchAccessor, formName) => connect(
+  state => ({
+    getFormalizerState: () => formalizerBranchAccessor(state).forms[formName] || INITIAL_FORM_STATE,
+  }),
+  dispatch => ({
+    setFormalizerState: state => dispatch(setFormalizerState({
+      formState: state,
+      formName,
+    })),
+    initializeForm: () => dispatch(initializeForm({ formName })),
+  })
+);
