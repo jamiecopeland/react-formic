@@ -5,6 +5,14 @@ import connectControl from '../connectControl';
 import { VALID, INVALID, PENDING } from '../../constants/validationStates';
 import { CHECKED, UNCHECKED } from '../../constants/checkboxStates';
 
+function throwOnChangeMissing(fieldName) {
+  throw new Error(
+    `No onChange handler available for field "${fieldName}".`
+    + ' The most likely explanation for this is that this input doesnt have a correpsonding'
+    + 'field defined in the config.'
+  );
+}
+
 const Input = (props) => {
   const { fieldName, className, type, value, getFormalizerField } = props;
   const field = getFormalizerField(fieldName);
@@ -33,13 +41,17 @@ const Input = (props) => {
       },
     };
 
+    if (!field.onChange) {
+      throwOnChangeMissing(fieldName);
+    }
+
     switch (type) {
       case 'radio':
         proxyProps.checked = field.value === value;
         break;
 
       case 'checkbox':
-        proxyProps.checked = field.checked || false;
+        proxyProps.checked = field.value === CHECKED;
         break;
 
       default:
