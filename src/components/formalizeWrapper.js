@@ -1,15 +1,8 @@
 import React from 'react';
 import { FuncSubject } from 'rx-react';
 import Rx from 'rx';
-// import { merge } from 'ramda';
-import {merge} from 'lodash';
-
-import { mapObjectToArray, mapObjectToObject } from '../utils/objectUtils';
-
-const mapValueToProperty = propertyName => value => ({ [propertyName]: value });
-const mergeValueStreams = streams => Rx.Observable
-  .merge(null, mapObjectToArray(streams, (value, key) => value.map(mapValueToProperty(key))))
-  .scan((acc, x) => ({ ...acc, ...x }));
+import { merge } from 'lodash';
+import { mapObjectToArray } from '../utils/objectUtils';
 
 /**
  * Merges multiple value streams that output this shape data:
@@ -35,10 +28,7 @@ const mergeValueStreams2 = streams => Rx.Observable
   }))))
   .scan((acc, x) => ({ ...acc, ...x }));
 
-export const INITIAL_FORM_STATE = {
-  fieldValues: {},
-  validation: { fields: {} },
-};
+export const INITIAL_FORM_STATE = { fields: {} };
 
 export function formalize(config) {
   const valueStreams = config.fields.reduce((acc, fieldName) => ({
@@ -69,26 +59,13 @@ export function formalize(config) {
         // TODO Find a nicer, more universal way of doing this
         this.props.initializeForm();
 
-        this.validation$ = mergeValueStreams(valueStreams)
-        .map(fieldValues => ({ fieldValues }))
-        .merge(config.createValidationStream(valueStreams).map(validation => ({ validation })))
-        .scan((acc, stream) => ({ ...acc, ...stream }))
-        // Ensure validation is always populated with an empty object to prevent a conditional
-        // being needed in getFormalizerField which is called very frequently by inputs via context.
-        .map(formState => ({
-          ...formState,
-          validation: formState.validation || INITIAL_FORM_STATE.validation,
-        }))
-        .subscribe(formState => this.props.setFormalizerState(formState));
-
-        // Nicer output
+        // TODO: Check if startWith is necessary in both Redux and local state persistence wrappers and write note either way
         this.validation2$ = mergeValueStreams2(valueStreams)
         .map(fields => ({ fields }))
         .merge(config.createValidationStream(valueStreams))
-        .scan((acc, stream) => {
-          return merge({}, acc, stream);
-        })
-        .subscribe(formState => console.log('final: ', JSON.stringify(formState)));
+        .scan((acc, stream) => merge({}, acc, stream))
+        .startWith(INITIAL_FORM_STATE)
+        .subscribe(formState => this.props.setFormalizerState(formState));
       }
 
       componentWillUnmount() {
@@ -98,19 +75,7 @@ export function formalize(config) {
       getFormalizerField = (fieldName) => {
         const formState = this.props.getFormalizerState();
         return {
-          ...formState.validation.fields[fieldName],
-          value: formState.fieldValues[fieldName],
-          // validation: formState.validation.fields[fieldName],
-          onChange: valueStreams[fieldName],
-        };
-      }
-
-      getFormalizerField = (fieldName) => {
-        const formState = this.props.getFormalizerState();
-        return {
-          ...formState.validation.fields[fieldName],
-          value: formState.fieldValues[fieldName],
-          // validation: formState.validation.fields[fieldName],
+          ...formState.fields[fieldName],
           onChange: valueStreams[fieldName],
         };
       }
