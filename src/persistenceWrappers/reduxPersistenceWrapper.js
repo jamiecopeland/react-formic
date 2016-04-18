@@ -23,7 +23,7 @@ export function formalizerReducer(state = defaultState, action) {
         ...state,
         forms: {
           ...state.forms,
-          [action.payload.formName]: INITIAL_FORM_STATE,
+          [action.payload.formName]: state.forms[action.payload.formName] || INITIAL_FORM_STATE,
         },
       };
 
@@ -46,6 +46,7 @@ export function formalizerReducer(state = defaultState, action) {
 
 import { connect } from 'react-redux';
 
+// TODO Add extra param clearStateOnUnmount
 export const createConnectWrapper = (formalizerBranchAccessor, formName) => connect(
   state => ({
     getFormalizerState: () => formalizerBranchAccessor(state).forms[formName] || INITIAL_FORM_STATE,
