@@ -43,10 +43,17 @@ const createFormStream = (config, valueStreams) => mergeValueStreams(valueStream
   // and write note either way
   // .startWith(INITIAL_FORM_STATE);
 
+const getFinalValueStreams = (rawValueStreams, mappedValueStreams) =>
+  mapObjectToObject(
+    rawValueStreams,
+    (rawValueStream, key) => (mappedValueStreams[key] || rawValueStream)
+  );
+  // rawValueStreams.map((rawValueStream, key) => mappedValueStreams[key] || rawValueStream);
+
 export const INITIAL_FORM_STATE = { fields: {}, validity: INVALID };
 
 export function formalize(config) {
-  const valueStreams = config.fields.reduce((acc, fieldName) => ({
+  const rawValueStreams = config.fields.reduce((acc, fieldName) => ({
     ...acc,
     [fieldName]: FuncSubject.create(),
   }), {});
@@ -77,7 +84,10 @@ export function formalize(config) {
         // TODO Find a nicer, more universal way of doing this
         this.props.initializeForm();
 
-        this.form$ = createFormStream(config, valueStreams)
+        this.form$ = createFormStream(
+          config,
+          getFinalValueStreams(rawValueStreams, config.transformValueStreams(rawValueStreams))
+        )
         .subscribe(formState => this.props.setFormalizerState(formState));
       }
 
@@ -87,7 +97,7 @@ export function formalize(config) {
 
       getFormalizerField = fieldName => ({
         ...this.props.getFormalizerState().fields[fieldName],
-        onChange: valueStreams[fieldName],
+        onChange: rawValueStreams[fieldName],
       })
 
       getFormalizerForm = includeOnChangeHandlers => {
@@ -95,7 +105,7 @@ export function formalize(config) {
         return includeOnChangeHandlers
         ? {
           ...formState,
-          fields: mapObjectToObject(valueStreams, (valueStream, fieldName) => ({
+          fields: mapObjectToObject(rawValueStreams, (valueStream, fieldName) => ({
             ...formState.fields[fieldName],
             onChange: valueStream,
           })),
