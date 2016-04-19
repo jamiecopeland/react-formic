@@ -1,79 +1,29 @@
 import React from 'react';
-import { FuncSubject } from 'rx-react';
-import Rx from 'rx';
+import { Map } from 'immutable';
 
-import { mapObjectToArray, mapObjectToObject } from '../utils/objectUtils';
 import { INVALID } from '../constants/validationStates';
-/**
- * Merges multiple value streams that output this shape data:
- * {
- *   email: 'darth@deathstar.com',
- * }
- *
- * Into a single stream that outputs this shape data:
- * {
- *   email: {
- *     value: 'darth@deathstar.com',
- *   }
- *   userName: {
- *     value: 'darth1',
- *   }
- * }
- */
-const mergeValueStreams = streams => Rx.Observable
-  .merge(null, mapObjectToArray(streams, (stream, key) => stream.map(value => ({
-    [key]: { value },
-  }))))
-  .scan((acc, x) => ({ ...acc, ...x }));
+import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
+import { logImmutable } from '../utils/immutableUtils';
 
-const mergeNewStreamContent = (currentContent, newContent) => ({
-  ...currentContent,
-  ...newContent,
-  fields: mapObjectToObject(newContent.fields, (field, fieldName) => ({
-    ...currentContent.fields[fieldName],
-    ...field,
-  })),
-});
+import {
+  // DELETE_FORMALIZER_FORM,
+  // INITIALIZE_FORMALIZER_FORM,
+  // SET_FORMALIZER_FIELD,
 
-const createFormStream = (config, valueStreams, getFormalizerForm) =>
-  // mergeValueStreams(valueStreams)
-  // .do((value) => {
-  //   console.log('value change', value);
-  // })
-  // .map(fields => ({ fields }))
-  // .merge(config.createValidationStream(valueStreams, getFormalizerForm))
-  // .scan((acc, stream) => mergeNewStreamContent(acc, stream));
-  // TODO: Check if startWith is necessary in both Redux and local state persistence wrappers
-  // and write note either way
-  // .startWith(INITIAL_FORM_STATE);
-
-  config.createValidationStream(valueStreams, getFormalizerForm);
-
-const getFinalValueStreams = (rawValueStreams, mappedValueStreams) =>
-  mapObjectToObject(
-    rawValueStreams,
-    (rawValueStream, key) => (mappedValueStreams[key] || rawValueStream)
-  );
-  // rawValueStreams.map((rawValueStream, key) => mappedValueStreams[key] || rawValueStream);
+  Field,
+  Form,
+} from 'formalizer/lib/persistenceWrappers/reduxPersistenceWrapper';
 
 export const INITIAL_FORM_STATE = { fields: {}, validity: INVALID };
 
-export function formalize(config) {
-  const rawValueStreams = config.fields.reduce((acc, fieldName) => ({
-    ...acc,
-    [fieldName]: FuncSubject.create(),
-  }), {});
-
+export function formalize(config, mapFormToProps) {
   return ComponentToWrap => {
     class FormalizeComponent extends React.Component {
 
       static propTypes = {
         initializeForm: React.PropTypes.func.isRequired,
-        setFormFieldValue: React.PropTypes.func.isRequired,
-        // TODO Rename to getFormalizerFormState
-        setFormalizerState: React.PropTypes.func.isRequired,
-        getFormalizerState: React.PropTypes.func.isRequired,
-
+        setFormField: React.PropTypes.func.isRequired,
+        getFormState: React.PropTypes.func.isRequired,
       };
 
       static childContextTypes = {
@@ -89,66 +39,49 @@ export function formalize(config) {
       }
 
       componentWillMount() {
-        // TODO Find a nicer, more universal way of doing this
-        this.props.initializeForm();
-
-        // const tempEmailStream = getFinalValueStreams(rawValueStreams, config.transformValueStreams(rawValueStreams)).email;
-        // tempEmailStream.subscribe(
-        //   value => {
-        //     console.log('value: ', value);
-        //   }
-        // );
-
-
-        // TODO Listen to all value streams and dispatch field value change action
-
-        const valueStreams = getFinalValueStreams(rawValueStreams, config.transformValueStreams(rawValueStreams));
-
-        this.disposableValueStreams = mapObjectToArray(valueStreams, (valueStream, fieldName) => {
-
-          return valueStream.subscribe(
-            value => {
-              console.log('trigger update field value action: ', fieldName, value);
-              this.props.setFormFieldValue({ fieldName, value });
-
-            },
-          );
+        this.valueChangeHandlers = mapObjectToObject(config.fields, field => value => {
+          console.log('heard the value change', value);
         });
 
-
-        this.form$ = createFormStream(
-          config,
-          valueStreams,
-          this.getFormalizerForm
-        )
-        .subscribe(formState => this.props.setFormalizerState(formState));
+        this.props.initializeForm({
+          form: new Form({
+            fields: Map({
+              firstName: Field({
+                value: 'Jamie',
+              }),
+            }),
+          }),
+          formName: config.name,
+        });
       }
 
       componentWillUnmount() {
-        this.form$.dispose();
-        this.disposableValueStreams.forEach(stream => stream.dispose());
+
       }
 
       getFormalizerField = fieldName => ({
-        ...this.props.getFormalizerState().fields[fieldName],
-        onChange: rawValueStreams[fieldName],
+        ...(this.props.getFormState().getIn(['fields', fieldName])),
+        //onChange: rawValueStreams[fieldName],
       })
 
-      getFormalizerForm = includeOnChangeHandlers => {
-        const formState = this.props.getFormalizerState();
-        return includeOnChangeHandlers
-        ? {
-          ...formState,
-          fields: mapObjectToObject(rawValueStreams, (valueStream, fieldName) => ({
-            ...formState.fields[fieldName],
-            onChange: valueStream,
-          })),
-        }
-        : formState;
-      }
+      // getFormalizerForm = includeOnChangeHandlers => {
+      //   const formState = this.props.getFormState();
+      //   return includeOnChangeHandlers
+      //   ? {
+      //     ...formState,
+      //     fields: mapObjectToObject(rawValueStreams, (valueStream, fieldName) => ({
+      //       ...formState.fields[fieldName],
+      //       onChange: valueStream,
+      //     })),
+      //   }
+      //   : formState;
+      // }
 
       render() {
-        return <ComponentToWrap />;
+        const formProps = mapFormToProps
+          ? mapFormToProps(this.props.getFormState())
+          : { form: this.props.getFormState() };
+        return <ComponentToWrap {...formProps} />;
       }
     }
 

@@ -1,6 +1,7 @@
 import { Map, Record } from 'immutable';
 
 import { INITIAL_FORM_STATE } from '../components/formalizeWrapper';
+import { logImmutable } from '../utils/immutableUtils';
 
 // --------------------------------------------------
 // Action creators
@@ -44,6 +45,10 @@ function deleteFormalizerForm(state = defaultState, { payload: { formName } }) {
 }
 
 function initializeFormalizerForm(state = defaultState, { payload: { form, formName } }) {
+  // logImmutable('initializeFormalizerForm>>> ', state.setIn(['forms', formName], form));
+  // console.log('formName: ', formName);
+  // console.log('form: ', form);
+
   return state.setIn(['forms', formName], form);
 }
 
@@ -72,15 +77,18 @@ export function formalizerReducer(state = defaultState, action) {
 
 import { connect } from 'react-redux';
 
+const emptyForm = Form({});
+
 // TODO Add extra param clearStateOnUnmount
 export const createConnectWrapper = (formalizerBranchAccessor, formName) => connect(
   state => ({
-    getFormalizerState: () => formalizerBranchAccessor(state).forms[formName] || INITIAL_FORM_STATE,
+    getFormState: () => {
+      return formalizerBranchAccessor(state).getIn(['forms', formName]) || emptyForm;
+    },
   }),
   dispatch => ({
     deleteForm: () => dispatch(initializeForm({ formName })),
-    initializeForm: ({ formState }) => dispatch(initializeForm({ formState })),
-    setFormField: ({ field, shouldReplace }) =>
-      dispatch(setFormField({ formName, field, shouldReplace })),
+    initializeForm: options => dispatch(initializeForm({ ...options, formName })),
+    setFormField: options => dispatch(setFormField({ ...options, formName })),
   }),
 );
