@@ -24,4 +24,4 @@ Select.propTypes = {
   value: React.PropTypes.string,
 };
 
-export default connectControl(field => ({ field }))(Select);
+export default connectControl()(Select);

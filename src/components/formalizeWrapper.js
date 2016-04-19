@@ -27,61 +27,52 @@ export function formalize(config, mapFormToProps) {
       };
 
       static childContextTypes = {
-        getFormalizerField: React.PropTypes.func,
-        getFormalizerForm: React.PropTypes.func,
+        getFormFieldState: React.PropTypes.func,
+        getFormFieldChangeHandler: React.PropTypes.func,
+        getFormState: React.PropTypes.func,
       }
 
       getChildContext() {
         return {
-          getFormalizerField: this.getFormalizerField,
-          getFormalizerForm: this.getFormalizerForm,
+          getFormFieldState: this.getFormFieldState,
+          getFormFieldChangeHandler: this.getFormFieldChangeHandler,
+          getFormState: this.getFormalizerForm,
         };
       }
 
       componentWillMount() {
-        this.valueChangeHandlers = mapObjectToObject(config.fields, field => value => {
+        this.fieldChangeHandlers = mapObjectToObject(config.fields, field => value => {
           console.log('heard the value change', value);
         });
 
         this.props.initializeForm({
           form: new Form({
-            fields: Map({
-              firstName: Field({
-                value: 'Jamie',
-              }),
-            }),
+            fields: Map(mapObjectToObject(config.fields, field => new Field({
+              value: field.initialValues.value,
+            }))),
           }),
           formName: config.name,
         });
       }
 
-      componentWillUnmount() {
+      componentWillUnmount() {}
 
-      }
+      getFormFieldState = fieldName => this.props.getFormState().getIn(['fields', fieldName])
 
-      getFormalizerField = fieldName => ({
-        ...(this.props.getFormState().getIn(['fields', fieldName])),
-        //onChange: rawValueStreams[fieldName],
-      })
+      getFormFieldChangeHandler = fieldName => this.fieldChangeHandlers[fieldName]
 
-      // getFormalizerForm = includeOnChangeHandlers => {
-      //   const formState = this.props.getFormState();
-      //   return includeOnChangeHandlers
-      //   ? {
-      //     ...formState,
-      //     fields: mapObjectToObject(rawValueStreams, (valueStream, fieldName) => ({
-      //       ...formState.fields[fieldName],
-      //       onChange: valueStream,
-      //     })),
-      //   }
-      //   : formState;
-      // }
+      getFormState = () => this.props.getFormState()
 
       render() {
         const formProps = mapFormToProps
           ? mapFormToProps(this.props.getFormState())
           : { form: this.props.getFormState() };
-        return <ComponentToWrap {...formProps} />;
+
+        // The first render happens before initialization has time to complete so only render
+        // contents afterwards to avoid lots of conditional checking for state in sub components
+        return this.props.getFormState().fields.count() > 0
+          ? <ComponentToWrap {...formProps} />
+          : null;
       }
     }
 

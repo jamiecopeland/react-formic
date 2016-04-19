@@ -21,4 +21,4 @@ ErrorMessage.propTypes = {
   component: React.PropTypes.func.isRequired,
 };
 
-export default connectControl(field => ({ field }))(ErrorMessage);
+export default connectControl()(ErrorMessage);

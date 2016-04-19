@@ -6,7 +6,7 @@ import { VALID, INVALID, PENDING } from '../../constants/validationStates';
 import { CHECKED, UNCHECKED } from '../../constants/checkboxStates';
 
 const Input = (props) => {
-  const { className, type, value, field } = props;
+  const { className, type, value, field, onChange } = props;
 
   const proxyProps = {
     ...props,
@@ -18,13 +18,13 @@ const Input = (props) => {
     onChange: event => {
       switch (type) {
         case 'radio':
-          field.onChange(value);
+          onChange(value);
           break;
         case 'checkbox':
-          field.onChange(event.target.checked ? CHECKED : UNCHECKED);
+          onChange(event.target.checked ? CHECKED : UNCHECKED);
           break;
         default:
-          field.onChange(event.target.value);
+          onChange(event.target.value);
       }
     },
   };
@@ -52,8 +52,13 @@ const Input = (props) => {
 Input.propTypes = {
   className: React.PropTypes.string,
   field: React.PropTypes.object.isRequired,
+  onChange: React.PropTypes.func.isRequired,
   type: React.PropTypes.string.isRequired,
   value: React.PropTypes.string,
 };
 
-export default connectControl(field => ({ field }))(Input);
+Input.defaultProps = {
+  field: require('immutable').Map,
+};
+
+export default connectControl()(Input);
