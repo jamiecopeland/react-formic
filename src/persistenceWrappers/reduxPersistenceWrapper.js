@@ -73,7 +73,7 @@ import { connect } from 'react-redux';
 // TODO Add extra param clearStateOnUnmount
 export const createConnectWrapper = (formalizerBranchAccessor, formName) => connect(
   state => ({
-    getFormState: () => formalizerBranchAccessor(state).getIn(['forms', formName]),
+    formState: formalizerBranchAccessor(state).getIn(['forms', formName]),
   }),
   dispatch => ({
     deleteForm: () => dispatch(initializeForm({ formName })),

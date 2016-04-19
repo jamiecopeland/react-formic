@@ -22,9 +22,9 @@ export function formalize(config, mapFormToProps) {
 
       static propTypes = {
         deleteForm: React.PropTypes.func.isRequired,
+        formState: React.PropTypes.object,
         initializeForm: React.PropTypes.func.isRequired,
         setFormField: React.PropTypes.func.isRequired,
-        getFormState: React.PropTypes.func.isRequired,
       };
 
       static childContextTypes = {
@@ -63,27 +63,36 @@ export function formalize(config, mapFormToProps) {
         }
       }
 
+      componentWillReceiveProps(nextProps) {
+        // console.log('nextProps: ', nextProps.formState.toJS());
+        nextProps.formState.fields.map((field) => {
+          console.log('field', field.toJS());
+        });
+      }
+
       componentWillUnmount() {
         if (config.clearOnUnmount) {
           this.props.deleteForm();
         }
       }
 
-      getFormFieldState = fieldName => this.props.getFormState().getIn(['fields', fieldName])
+      getFormFieldState = fieldName => this.props.formState.getIn(['fields', fieldName])
 
       getFormFieldChangeHandler = fieldName => this.fieldChangeHandlers[fieldName]
 
-      getFormState = () => this.props.getFormState()
+      getFormState = () => this.props.formState
 
       render() {
-        const formProps = mapFormToProps
-          ? mapFormToProps(this.props.getFormState())
-          : { form: this.props.getFormState() };
+        const { formState } = this.props;
+
+        const proxyProps = mapFormToProps
+          ? mapFormToProps(formState)
+          : { form: formState };
 
         // The first render happens before initialization has time to complete so only render
         // contents afterwards to avoid lots of conditional checking for state in sub components
-        return this.props.getFormState()
-          ? <ComponentToWrap {...formProps} />
+        return formState
+          ? <ComponentToWrap {...proxyProps} />
           : null;
       }
     }
