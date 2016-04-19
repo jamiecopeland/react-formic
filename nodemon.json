@@ -1,0 +1,7 @@
+{
+  "restartable": "rs",
+  "verbose": false,
+  "watch": [
+    "src/**/*"
+  ]
+}

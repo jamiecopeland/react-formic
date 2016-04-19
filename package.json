@@ -1,46 +1,75 @@
 {
   "name": "formalizer",
-  "version": "0.0.1",
-  "description": "Making forms easy in React",
+  "version": "0.2.2",
+  "description": "Form niceness for React",
   "scripts": {
-    "build": "babel src --out-dir lib"
+    "build": "babel src --out-dir lib",
+    "test": "karma start"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:jamiecopeland/formalier-examples.git"
+    "url": ""
   },
   "keywords": [
+    "formalizer",
+    "form",
+    "validation",
     "react",
-    "redux",
-    "express"
-  ],
-  "authors": [
-    "Jamie Copeland"
+    "rxjs"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jamiecopeland/formalier-examples/issues"
+    "url": ""
   },
-  "homepage": "https://github.com/jamiecopeland/formalier-examples",
-  "engines": {
-    "node": "4.2.x"
-  },
-  "main": "lib/index.js",
+  "homepage": "http://redux.js.org",
   "dependencies": {
-    "classnames": "^2.2.3",
-    "react": "^0.14.8",
-    "redux-actions": "^0.9.1",
-    "rx": "^4.1.0",
-    "rx-react": "^0.3.0"
+    "babel-polyfill": "^6.3.14",
+    "immutable": "^3.7.6",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1",
+    "react-redux": "^4.2.1",
+    "react-router": "^2.0.1",
+    "react-router-redux": "^4.0.2",
+    "redux": "^3.2.1",
+    "redux-logger": "^2.4.0",
+    "redux-thunk": "^1.0.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.7.5",
-    "babel-preset-es2015": "^6.6.0",
-    "babel-preset-react": "^6.5.0",
+    "autoprefixer": "^6.3.6",
+    "babel-core": "^6.3.15",
+    "babel-eslint": "^6.0.2",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.5.0",
+    "chai": "^3.5.0",
+    "chai-immutable": "^1.5.4",
+    "css-loader": "^0.23.1",
+    "enzyme": "^2.2.0",
     "eslint": "^2.7.0",
     "eslint-config-airbnb": "^6.2.0",
     "eslint-config-react": "^1.1.1",
-    "eslint-plugin-react": "^4.3.0"
+    "eslint-loader": "^1.3.0",
+    "eslint-plugin-react": "^4.3.0",
+    "expect": "^1.6.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "jsdom": "^8.3.1",
+    "karma-mocha": "^0.2.2",
+    "karma-mocha-reporter": "^2.0.0",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^1.7.0",
+    "mocha": "^2.4.5",
+    "node-libs-browser": "^0.5.2",
+    "phantomjs-polyfill": "0.0.2",
+    "phantomjs-prebuilt": "^2.1.7",
+    "postcss-loader": "^0.8.2",
+    "precss": "^1.4.0",
+    "react-addons-test-utils": "^15.0.1",
+    "redbox-react": "^1.2.2",
+    "sinon": "^1.17.3",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.9.11"
   }
 }
