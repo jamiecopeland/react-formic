@@ -35,13 +35,19 @@ const mergeNewStreamContent = (currentContent, newContent) => ({
   })),
 });
 
-const createFormStream = (config, valueStreams) => mergeValueStreams(valueStreams)
-  .map(fields => ({ fields }))
-  .merge(config.createValidationStream(valueStreams))
-  .scan((acc, stream) => mergeNewStreamContent(acc, stream));
+const createFormStream = (config, valueStreams, getFormalizerForm) =>
+  // mergeValueStreams(valueStreams)
+  // .do((value) => {
+  //   console.log('value change', value);
+  // })
+  // .map(fields => ({ fields }))
+  // .merge(config.createValidationStream(valueStreams, getFormalizerForm))
+  // .scan((acc, stream) => mergeNewStreamContent(acc, stream));
   // TODO: Check if startWith is necessary in both Redux and local state persistence wrappers
   // and write note either way
   // .startWith(INITIAL_FORM_STATE);
+
+  config.createValidationStream(valueStreams, getFormalizerForm);
 
 const getFinalValueStreams = (rawValueStreams, mappedValueStreams) =>
   mapObjectToObject(
@@ -62,10 +68,12 @@ export function formalize(config) {
     class FormalizeComponent extends React.Component {
 
       static propTypes = {
+        initializeForm: React.PropTypes.func.isRequired,
+        setFormFieldValue: React.PropTypes.func.isRequired,
         // TODO Rename to getFormalizerFormState
-        setFormalizerState: React.PropTypes.func,
-        getFormalizerState: React.PropTypes.func,
-        initializeForm: React.PropTypes.func,
+        setFormalizerState: React.PropTypes.func.isRequired,
+        getFormalizerState: React.PropTypes.func.isRequired,
+
       };
 
       static childContextTypes = {
@@ -84,15 +92,41 @@ export function formalize(config) {
         // TODO Find a nicer, more universal way of doing this
         this.props.initializeForm();
 
+        // const tempEmailStream = getFinalValueStreams(rawValueStreams, config.transformValueStreams(rawValueStreams)).email;
+        // tempEmailStream.subscribe(
+        //   value => {
+        //     console.log('value: ', value);
+        //   }
+        // );
+
+
+        // TODO Listen to all value streams and dispatch field value change action
+
+        const valueStreams = getFinalValueStreams(rawValueStreams, config.transformValueStreams(rawValueStreams));
+
+        this.disposableValueStreams = mapObjectToArray(valueStreams, (valueStream, fieldName) => {
+
+          return valueStream.subscribe(
+            value => {
+              console.log('trigger update field value action: ', fieldName, value);
+              this.props.setFormFieldValue({ fieldName, value });
+
+            },
+          );
+        });
+
+
         this.form$ = createFormStream(
           config,
-          getFinalValueStreams(rawValueStreams, config.transformValueStreams(rawValueStreams))
+          valueStreams,
+          this.getFormalizerForm
         )
         .subscribe(formState => this.props.setFormalizerState(formState));
       }
 
       componentWillUnmount() {
         this.form$.dispose();
+        this.disposableValueStreams.forEach(stream => stream.dispose());
       }
 
       getFormalizerField = fieldName => ({

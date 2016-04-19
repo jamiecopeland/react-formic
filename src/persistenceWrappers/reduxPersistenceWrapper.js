@@ -1,15 +1,19 @@
 import { INITIAL_FORM_STATE } from '../components/formalizeWrapper';
+import { merge } from 'lodash';
 
 // --------------------------------------------------
 // Action creators
 
 const createAction = type => payload => ({ type, payload });
 
+export const INITIALIZE_FORM = 'formalizerActions.INITIALIZE_FORM';
+export const initializeForm = createAction(INITIALIZE_FORM);
+
 export const SET_FORMALIZER_STATE = 'formalizerActions.SET_FORMALIZER_STATE';
 export const setFormalizerState = createAction(SET_FORMALIZER_STATE);
 
-export const INITIALIZE_FORM = 'formalizerActions.INITIALIZE_FORM';
-export const initializeForm = createAction(INITIALIZE_FORM);
+export const SET_FORM_FIELD_VALUE = 'formalizerActions.SET_FORM_FIELD_VALUE';
+export const setFormFieldValue = createAction(SET_FORM_FIELD_VALUE);
 
 // --------------------------------------------------
 // Reducer
@@ -28,11 +32,34 @@ export function formalizerReducer(state = defaultState, action) {
       };
 
     case SET_FORMALIZER_STATE:
+      console.log('old: ', state.forms[action.payload.formName]);
+      console.log('new: ', action.payload.formState);
+      console.log('merge', merge({}, state.forms[action.payload.formName], action.payload.formState));
+
       return {
         ...state,
         forms: {
           ...state.forms,
-          [action.payload.formName]: action.payload.formState,
+          [action.payload.formName]: merge({}, state.forms[action.payload.formName], action.payload.formState),
+        },
+      };
+
+    case SET_FORM_FIELD_VALUE:
+      const form = state.forms[action.payload.formName];
+      const field = form.fields[action.payload.fieldName];
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [action.payload.formName]: {
+            ...form,
+            fields: {
+              [action.payload.fieldName]: {
+                ...field,
+                value: action.payload.value,
+              },
+            },
+          },
         },
       };
 
@@ -52,10 +79,15 @@ export const createConnectWrapper = (formalizerBranchAccessor, formName) => conn
     getFormalizerState: () => formalizerBranchAccessor(state).forms[formName] || INITIAL_FORM_STATE,
   }),
   dispatch => ({
+    initializeForm: () => dispatch(initializeForm({ formName })),
+    setFormFieldValue: ({ fieldName, value }) => dispatch(setFormFieldValue({
+      formName,
+      fieldName,
+      value,
+    })),
     setFormalizerState: state => dispatch(setFormalizerState({
       formState: state,
       formName,
     })),
-    initializeForm: () => dispatch(initializeForm({ formName })),
   })
 );
