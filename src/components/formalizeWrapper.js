@@ -21,6 +21,7 @@ export function formalize(config, mapFormToProps) {
     class FormalizeComponent extends React.Component {
 
       static propTypes = {
+        deleteForm: React.PropTypes.func.isRequired,
         initializeForm: React.PropTypes.func.isRequired,
         setFormField: React.PropTypes.func.isRequired,
         getFormState: React.PropTypes.func.isRequired,
@@ -63,7 +64,9 @@ export function formalize(config, mapFormToProps) {
       }
 
       componentWillUnmount() {
-        // TODO Add form deletion feature to be specified in config
+        if (config.clearOnUnmount) {
+          this.props.deleteForm();
+        }
       }
 
       getFormFieldState = fieldName => this.props.getFormState().getIn(['fields', fieldName])
