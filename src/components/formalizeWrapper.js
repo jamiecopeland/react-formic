@@ -41,21 +41,30 @@ export function formalize(config, mapFormToProps) {
       }
 
       componentWillMount() {
-        this.fieldChangeHandlers = mapObjectToObject(config.fields, field => value => {
-          console.log('heard the value change', value);
+        this.fieldChangeHandlers = mapObjectToObject(config.fields, (field, fieldName) => value => {
+          this.props.setFormField({
+            fieldName,
+            field: Map({
+              value: field.transform ? field.transform(value) : value,
+            }),
+          });
         });
 
-        this.props.initializeForm({
-          form: new Form({
-            fields: Map(mapObjectToObject(config.fields, field => new Field({
-              value: field.initialValues.value,
-            }))),
-          }),
-          formName: config.name,
-        });
+        if (!this.getFormState()) {
+          this.props.initializeForm({
+            form: new Form({
+              fields: Map(mapObjectToObject(config.fields, field => new Field({
+                value: field.initialValues.value,
+              }))),
+            }),
+            formName: config.name,
+          });
+        }
       }
 
-      componentWillUnmount() {}
+      componentWillUnmount() {
+        // TODO Add form deletion feature to be specified in config
+      }
 
       getFormFieldState = fieldName => this.props.getFormState().getIn(['fields', fieldName])
 
@@ -70,7 +79,7 @@ export function formalize(config, mapFormToProps) {
 
         // The first render happens before initialization has time to complete so only render
         // contents afterwards to avoid lots of conditional checking for state in sub components
-        return this.props.getFormState().fields.count() > 0
+        return this.props.getFormState()
           ? <ComponentToWrap {...formProps} />
           : null;
       }
