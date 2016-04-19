@@ -1,7 +1,8 @@
 import React from 'react';
-import { Map } from 'immutable';
+import { Map, is } from 'immutable';
+import { FuncSubject } from 'rx-react';
 
-import { INVALID } from '../constants/validationStates';
+import { INVALID, VALID } from '../constants/validationStates';
 import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
 import { logImmutable } from '../utils/immutableUtils';
 
@@ -15,6 +16,12 @@ import {
 } from 'formalizer/lib/persistenceWrappers/reduxPersistenceWrapper';
 
 export const INITIAL_FORM_STATE = { fields: {}, validity: INVALID };
+
+function cleanValidationOutput({ validity, validityMessage }) {
+  const output = { validity };
+  if (validity === INVALID) { output.validityMessage = validityMessage; }
+  return output;
+}
 
 export function formalize(config, mapFormToProps) {
   return ComponentToWrap => {
@@ -42,6 +49,7 @@ export function formalize(config, mapFormToProps) {
       }
 
       componentWillMount() {
+        // Create change handlers
         this.fieldChangeHandlers = mapObjectToObject(config.fields, (field, fieldName) => value => {
           this.props.setFormField({
             fieldName,
@@ -49,6 +57,29 @@ export function formalize(config, mapFormToProps) {
               value: field.transform ? field.transform(value) : value,
             }),
           });
+        });
+
+        // Create validation streams
+        this.validationStreams = mapObjectToObject(config.fields, (field, fieldName) => {
+          let output;
+
+          if (field.validate) {
+            const subject = FuncSubject.create();
+            const stream = field.validate(subject).subscribe(
+              value => {
+                // console.log('validation', value);
+                this.props.setFormField({
+                  field: Map(cleanValidationOutput(value)),
+                  fieldName,
+                });
+              }
+            );
+            output = { stream, subject };
+          } else {
+            output = null;
+          }
+
+          return output;
         });
 
         if (!this.getFormState()) {
@@ -64,9 +95,16 @@ export function formalize(config, mapFormToProps) {
       }
 
       componentWillReceiveProps(nextProps) {
-        // console.log('nextProps: ', nextProps.formState.toJS());
-        nextProps.formState.fields.map((field) => {
-          console.log('field', field.toJS());
+        const { formState } = this.props;
+
+        nextProps.formState.fields.forEach((field, fieldName) => {
+          const isDifferent = !formState || field !== formState.fields.get(fieldName);
+          // Trigger validation stream
+          const { subject } = this.validationStreams[fieldName];
+          if(isDifferent && subject) {
+            // console.log('validationStream: ', fieldName,  field.value);
+            subject(field.value);
+          }
         });
       }
 
