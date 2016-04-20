@@ -103,9 +103,9 @@ function defaultMapFormToProps(formState) {
   return { form: formState };
 }
 
-export function formalize(config, mapFormToProps = defaultMapFormToProps) {
+function initialize(config, mapFormToProps = defaultMapFormToProps) {
   return ComponentToWrap => {
-    class FormalizeComponent extends React.Component {
+    class WrapperComponent extends React.Component {
 
       static propTypes = {
         deleteForm: React.PropTypes.func.isRequired,
@@ -173,6 +173,9 @@ export function formalize(config, mapFormToProps = defaultMapFormToProps) {
       }
     }
 
-    return config.persistenceWrapper(FormalizeComponent);
+    return config.persistenceWrapper(WrapperComponent);
   };
 }
+
+export default initialize;
+
