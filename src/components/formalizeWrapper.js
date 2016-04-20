@@ -65,7 +65,7 @@ export function formalize(config, mapFormToProps) {
 
           if (field.validate) {
             const subject = new Subject();
-            const stream = field.validate(subject).subscribe(
+            const stream = field.validate(subject, this.getFormState).subscribe(
               value => {
                 // console.log('validation', value);
                 this.props.setFormField({
