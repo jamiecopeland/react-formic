@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import { Subject } from 'rx';
 
 import { INVALID, VALID } from '../constants/validationStates';
-import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
+import { mapObjectToObject, reduceObject } from 'formalizer/lib/utils/objectUtils';
 import { logImmutable } from '../utils/immutableUtils';
 
 import {
@@ -49,15 +49,14 @@ export function formalize(config, mapFormToProps) {
       }
 
       componentWillMount() {
-        // Create change handlers
-        this.fieldChangeHandlers = mapObjectToObject(config.fields, (field, fieldName) => value => {
-          this.props.setFormField({
-            fieldName,
-            field: Map({
-              value: field.transform ? field.transform(value) : value,
-            }),
+        this.triggerFieldMap = Object.keys(config.fields)
+        .filter(fieldName => config.fields[fieldName].triggerFields)
+        .reduce((acc, fieldName) => {
+          config.fields[fieldName].triggerFields.forEach(triggerFieldName => {
+            acc[triggerFieldName].push(fieldName);
           });
-        });
+          return acc;
+        }, mapObjectToObject(config.fields, () => []));
 
         // Create validation streams
         this.fieldValidators = mapObjectToObject(config.fields, (field, fieldName) => {
@@ -82,11 +81,29 @@ export function formalize(config, mapFormToProps) {
           return output;
         });
 
+        // Create change handlers
+        this.fieldChangeHandlers = mapObjectToObject(config.fields, (field, fieldName) => value => {
+          this.props.setFormField({
+            fieldName,
+            field: Map({
+              value: field.transform ? field.transform(value) : value,
+            }),
+          });
+
+          // Trigger other fields that need to know when this one changes
+          this.triggerFieldMap[fieldName].forEach(fieldNameToTrigger => {
+            // Trigger the field to revalidate with its current value
+            this.fieldValidators[fieldNameToTrigger].subject.onNext(
+              this.props.formState.getIn(['fields', fieldNameToTrigger, 'value'])
+            )
+          });
+        });
+
         if (!this.getFormState()) {
           this.props.initializeForm({
             form: new Form({
               fields: Map(mapObjectToObject(config.fields, field => new Field({
-                value: field.initialValues.value,
+                value: field.initialValues ? field.initialValues.value : undefined,
               }))),
             }),
             formName: config.name,
@@ -109,8 +126,6 @@ export function formalize(config, mapFormToProps) {
       }
 
       componentWillUnmount() {
-
-
         if (config.clearOnUnmount) {
           this.props.deleteForm();
         }
