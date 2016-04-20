@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import connectControl from '../connectControl';
+import connectField from '../connectors/connectField';
 import { CHECKED, UNCHECKED } from '../../constants/checkboxStates';
 import { fieldIsInvalid, fieldIsPending, fieldIsValid } from '../../utils/validationUtils';
 
@@ -61,4 +61,4 @@ Input.defaultProps = {
   field: require('immutable').Map,
 };
 
-export default connectControl()(Input);
+export default connectField()(Input);

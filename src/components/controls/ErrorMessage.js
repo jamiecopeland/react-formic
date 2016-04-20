@@ -1,6 +1,6 @@
 import React from 'react';
 
-import connectControl from '../connectControl';
+import connectField from '../connectors/connectField';
 import { fieldIsInvalid } from '../../utils/validationUtils';
 
 const ErrorMessage = ({ field, component: WrappedComponent }) => {
@@ -21,4 +21,4 @@ ErrorMessage.propTypes = {
   component: React.PropTypes.func.isRequired,
 };
 
-export default connectControl()(ErrorMessage);
+export default connectField()(ErrorMessage);

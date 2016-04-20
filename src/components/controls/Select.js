@@ -1,6 +1,6 @@
 import React from 'react';
 
-import connectControl from '../connectControl';
+import connectField from '../connectors/connectField';
 
 const Select = props => {
   const { children } = props;
@@ -24,4 +24,4 @@ Select.propTypes = {
   value: React.PropTypes.string,
 };
 
-export default connectControl()(Select);
+export default connectField()(Select);

@@ -4,7 +4,6 @@ import { Subject } from 'rx';
 
 import { INVALID } from '../constants/validationStates';
 import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
-
 import {
   Field,
   Form,
@@ -90,9 +89,7 @@ function createEmptyForm(fields) {
   });
 }
 
-function defaultMapFormToProps(formState) {
-  return { form: formState };
-}
+
 
 function getFieldsWithDiff(formState1, formState2) {
   return formState2.fields.reduce((acc, field, fieldName) => {
@@ -100,6 +97,10 @@ function getFieldsWithDiff(formState1, formState2) {
       ? acc.set(fieldName, field)
       : acc;
   }, Map({}));
+}
+
+function defaultMapFormToProps(formState) {
+  return { form: formState };
 }
 
 export function formalize(config, mapFormToProps = defaultMapFormToProps) {
