@@ -13,7 +13,7 @@ const SubmitButton = (props) => {
       ...props,
       className: classNames(className, {
         valid: validity === VALID,
-        invalid: validity === INVALID,
+        invalid: validity === INVALID, // TODO Add for level isDirty
         pending: validity === PENDING,
       }),
       disabled: validity !== VALID,

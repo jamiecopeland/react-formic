@@ -7,20 +7,15 @@ import { mapObjectToObject, reduceObject } from 'formalizer/lib/utils/objectUtil
 import { logImmutable } from '../utils/immutableUtils';
 
 import {
-  // DELETE_FORMALIZER_FORM,
-  // INITIALIZE_FORMALIZER_FORM,
-  // SET_FORMALIZER_FIELD,
-
   Field,
   Form,
 } from 'formalizer/lib/persistenceWrappers/reduxPersistenceWrapper';
 
-export const INITIAL_FORM_STATE = { fields: {}, validity: INVALID };
-
 function cleanValidationOutput({ validity, validityMessage }) {
-  const output = { validity };
-  if (validity === INVALID) { output.validityMessage = validityMessage; }
-  return output;
+  return {
+    validity,
+    validityMessage: validity === INVALID ? validityMessage : null,
+  };
 }
 
 export function formalize(config, mapFormToProps) {
@@ -86,6 +81,7 @@ export function formalize(config, mapFormToProps) {
           this.props.setFormField({
             fieldName,
             field: Map({
+              isDirty: true,
               value: field.transform ? field.transform(value) : value,
             }),
           });
@@ -113,13 +109,11 @@ export function formalize(config, mapFormToProps) {
 
       componentWillReceiveProps(nextProps) {
         const { formState } = this.props;
-
         nextProps.formState.fields.forEach((field, fieldName) => {
           const isDifferent = !formState || field !== formState.fields.get(fieldName);
           // Trigger validation stream
           const { subject } = this.fieldValidators[fieldName];
           if(isDifferent && subject) {
-            // console.log('validationStream: ', fieldName,  field.value);
             subject.onNext(field.value);
           }
         });

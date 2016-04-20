@@ -18,6 +18,7 @@ export const setFormField = createAction(SET_FORMALIZER_FIELD);
 // Immutable stuff
 
 export const Field = Record({
+  isDirty: undefined,
   value: undefined,
   validity: undefined,
   validityMessage: undefined,
@@ -37,15 +38,15 @@ export const Formalizer = Record({
 
 const defaultState = Formalizer({});
 
-function deleteFormalizerForm(state = defaultState, { payload: { formName } }) {
+function _deleteForm(state = defaultState, { payload: { formName } }) {
   return state.forms.delete(formName);
 }
 
-function initializeFormalizerForm(state = defaultState, { payload: { form, formName } }) {
+function _initializeForm(state = defaultState, { payload: { form, formName } }) {
   return state.setIn(['forms', formName], form);
 }
 
-function setFormalizerField(
+function _setFormField(
   state = defaultState, { payload: { formName, field, fieldName, shouldReplace } }
 ) {
   return shouldReplace
@@ -55,9 +56,9 @@ function setFormalizerField(
 }
 
 const reducerMap = {
-  [DELETE_FORMALIZER_FORM]: deleteFormalizerForm,
-  [INITIALIZE_FORMALIZER_FORM]: initializeFormalizerForm,
-  [SET_FORMALIZER_FIELD]: setFormalizerField,
+  [DELETE_FORMALIZER_FORM]: _deleteForm,
+  [INITIALIZE_FORMALIZER_FORM]: _initializeForm,
+  [SET_FORMALIZER_FIELD]: _setFormField,
 };
 
 export function formalizerReducer(state = defaultState, action) {

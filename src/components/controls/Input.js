@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 
 import connectControl from '../connectControl';
-import { VALID, INVALID, PENDING } from '../../constants/validationStates';
 import { CHECKED, UNCHECKED } from '../../constants/checkboxStates';
+import { fieldIsInvalid, fieldIsPending, fieldIsValid } from '../../utils/validationUtils';
 
 const Input = (props) => {
   const { className, type, value, field, onChange } = props;
@@ -11,9 +11,9 @@ const Input = (props) => {
   const proxyProps = {
     ...props,
     className: classNames(className, {
-      invalid: field.validity === INVALID,
-      pending: field.validity === PENDING,
-      valid: field.validity === VALID,
+      invalid: fieldIsInvalid(field),
+      pending: fieldIsPending(field),
+      valid: fieldIsValid(field),
     }),
     onChange: event => {
       switch (type) {

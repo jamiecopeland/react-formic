@@ -1,7 +1,7 @@
 import React from 'react';
 
 import connectControl from '../connectControl';
-import { INVALID } from '../../constants/validationStates';
+import { fieldIsInvalid } from '../../utils/validationUtils';
 
 const ErrorMessage = ({ field, component: WrappedComponent }) => {
   if (!field) {
@@ -10,7 +10,7 @@ const ErrorMessage = ({ field, component: WrappedComponent }) => {
   }
 
   return (
-    field && field.validity === INVALID && field.validityMessage && WrappedComponent
+    field && fieldIsInvalid(field) && field.validityMessage && WrappedComponent
     ? <WrappedComponent message={field.validityMessage} />
     : null
   );
