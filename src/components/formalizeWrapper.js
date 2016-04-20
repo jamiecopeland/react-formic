@@ -1,6 +1,6 @@
 import React from 'react';
 import { Map, is } from 'immutable';
-import { FuncSubject } from 'rx-react';
+import { Subject } from 'rx';
 
 import { INVALID, VALID } from '../constants/validationStates';
 import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
@@ -60,11 +60,11 @@ export function formalize(config, mapFormToProps) {
         });
 
         // Create validation streams
-        this.validationStreams = mapObjectToObject(config.fields, (field, fieldName) => {
+        this.fieldValidators = mapObjectToObject(config.fields, (field, fieldName) => {
           let output;
 
           if (field.validate) {
-            const subject = FuncSubject.create();
+            const subject = new Subject();
             const stream = field.validate(subject).subscribe(
               value => {
                 // console.log('validation', value);
@@ -100,15 +100,17 @@ export function formalize(config, mapFormToProps) {
         nextProps.formState.fields.forEach((field, fieldName) => {
           const isDifferent = !formState || field !== formState.fields.get(fieldName);
           // Trigger validation stream
-          const { subject } = this.validationStreams[fieldName];
+          const { subject } = this.fieldValidators[fieldName];
           if(isDifferent && subject) {
             // console.log('validationStream: ', fieldName,  field.value);
-            subject(field.value);
+            subject.onNext(field.value);
           }
         });
       }
 
       componentWillUnmount() {
+
+
         if (config.clearOnUnmount) {
           this.props.deleteForm();
         }
