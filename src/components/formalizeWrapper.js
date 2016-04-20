@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map, is } from 'immutable';
+import { Map } from 'immutable';
 import { Subject } from 'rx';
 
 import { INVALID, VALID } from '../constants/validationStates';
