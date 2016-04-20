@@ -1,16 +1,12 @@
 import { expect } from 'chai';
-import chaiImmutable from 'chai-immutable';
 import { Map, is } from 'immutable';
-import purdy from 'purdy';
 
+import { Field, Form, Formalizer } from '../data/statTypes';
 import {
   DELETE_FORMALIZER_FORM,
   INITIALIZE_FORMALIZER_FORM,
   SET_FORMALIZER_FIELD,
 
-  Field,
-  Form,
-  Formalizer,
   formalizerReducer,
 } from './reduxPersistenceWrapper';
 

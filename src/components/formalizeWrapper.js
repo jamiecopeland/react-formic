@@ -2,14 +2,14 @@ import React from 'react';
 import { Map } from 'immutable';
 import { Subject } from 'rx';
 
-import { INVALID, VALID } from '../constants/validationStates';
-import { mapObjectToObject, reduceObject } from 'formalizer/lib/utils/objectUtils';
+import { INVALID } from '../constants/validationStates';
+import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
 import { logImmutable } from '../utils/immutableUtils';
 
 import {
   Field,
   Form,
-} from 'formalizer/lib/persistenceWrappers/reduxPersistenceWrapper';
+} from 'formalizer/lib/data/stateTypes';
 
 function cleanValidationOutput({ validity, validityMessage }) {
   return {

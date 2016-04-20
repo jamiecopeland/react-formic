@@ -1,4 +1,4 @@
-import { Map, Record } from 'immutable';
+import { Formalizer } from '../data/stateTypes';
 
 // --------------------------------------------------
 // Action creators
@@ -13,25 +13,6 @@ export const initializeForm = createAction(INITIALIZE_FORMALIZER_FORM);
 
 export const SET_FORMALIZER_FIELD = 'formalizerActions.SET_FORMALIZER_FIELD';
 export const setFormField = createAction(SET_FORMALIZER_FIELD);
-
-// --------------------------------------------------
-// Immutable stuff
-
-export const Field = Record({
-  isDirty: undefined,
-  value: undefined,
-  validity: undefined,
-  validityMessage: undefined,
-});
-
-export const Form = Record({
-  fields: Map({}),
-  validity: undefined,
-});
-
-export const Formalizer = Record({
-  forms: Map({}),
-});
 
 // --------------------------------------------------
 // Reducer
