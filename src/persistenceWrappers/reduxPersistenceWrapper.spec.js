@@ -3,9 +3,9 @@ import { Map, is } from 'immutable';
 
 import { Field, Form, Formalizer } from '../data/statTypes';
 import {
-  DELETE_FORMALIZER_FORM,
-  INITIALIZE_FORMALIZER_FORM,
-  SET_FORMALIZER_FIELD,
+  DELETE_FORM,
+  INITIALIZE_FORM,
+  SET_FORM_FIELD,
 
   formalizerReducer,
 } from './reduxPersistenceWrapper';
@@ -31,10 +31,10 @@ const statePopulated = new Formalizer({
 });
 
 describe('reduxPersistenceWrapper', () => {
-  describe('DELETE_FORMALIZER_FORM', () => {
+  describe('DELETE_FORM', () => {
     it('should delete the form with the specified name', () => {
       const action = {
-        type: DELETE_FORMALIZER_FORM,
+        type: DELETE_FORM,
         payload: {
           formName: 'signup',
         },
@@ -44,10 +44,10 @@ describe('reduxPersistenceWrapper', () => {
     });
   });
 
-  describe('INITIALIZE_FORMALIZER_FORM', () => {
+  describe('INITIALIZE_FORM', () => {
     it('should create a form with the specified name', () => {
       const action = {
-        type: INITIALIZE_FORMALIZER_FORM,
+        type: INITIALIZE_FORM,
         payload: {
           form: Form({
             fields: Map({
@@ -64,10 +64,10 @@ describe('reduxPersistenceWrapper', () => {
     });
   });
 
-  describe('SET_FORMALIZER_FIELD', () => {
+  describe('SET_FORM_FIELD', () => {
     it('should replace field', () => {
       const action = {
-        type: SET_FORMALIZER_FIELD,
+        type: SET_FORM_FIELD,
         payload: {
           formName: 'signup',
           field: Field({
@@ -85,7 +85,7 @@ describe('reduxPersistenceWrapper', () => {
 
     it('should merge into field', () => {
       const action = {
-        type: SET_FORMALIZER_FIELD,
+        type: SET_FORM_FIELD,
         payload: {
           formName: 'signup',
           field: Map({

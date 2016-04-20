@@ -1,3 +1,5 @@
+import { connect } from 'react-redux';
+
 import { Formalizer } from '../data/stateTypes';
 
 // --------------------------------------------------
@@ -5,14 +7,14 @@ import { Formalizer } from '../data/stateTypes';
 
 const createAction = type => payload => ({ type, payload });
 
-export const DELETE_FORMALIZER_FORM = 'formalizerActions.DELETE_FORMALIZER_FORM';
-export const deleteForm = createAction(DELETE_FORMALIZER_FORM);
+export const DELETE_FORM = 'formalizer.DELETE_FORM';
+export const deleteForm = createAction(DELETE_FORM);
 
-export const INITIALIZE_FORMALIZER_FORM = 'formalizerActions.INITIALIZE_FORMALIZER_FORM';
-export const initializeForm = createAction(INITIALIZE_FORMALIZER_FORM);
+export const INITIALIZE_FORM = 'formalizer.INITIALIZE_FORM';
+export const initializeForm = createAction(INITIALIZE_FORM);
 
-export const SET_FORMALIZER_FIELD = 'formalizerActions.SET_FORMALIZER_FIELD';
-export const setFormField = createAction(SET_FORMALIZER_FIELD);
+export const SET_FORM_FIELD = 'formalizer.SET_FORM_FIELD';
+export const setFormField = createAction(SET_FORM_FIELD);
 
 // --------------------------------------------------
 // Reducer
@@ -37,9 +39,9 @@ function _setFormField(
 }
 
 const reducerMap = {
-  [DELETE_FORMALIZER_FORM]: _deleteForm,
-  [INITIALIZE_FORMALIZER_FORM]: _initializeForm,
-  [SET_FORMALIZER_FIELD]: _setFormField,
+  [DELETE_FORM]: _deleteForm,
+  [INITIALIZE_FORM]: _initializeForm,
+  [SET_FORM_FIELD]: _setFormField,
 };
 
 export function formalizerReducer(state = defaultState, action) {
@@ -50,9 +52,6 @@ export function formalizerReducer(state = defaultState, action) {
 // --------------------------------------------------
 // Connect wrapper
 
-import { connect } from 'react-redux';
-
-// TODO Add extra param clearStateOnUnmount
 export const createConnectWrapper = (formalizerBranchAccessor, formName) => connect(
   state => ({
     formState: formalizerBranchAccessor(state).getIn(['forms', formName]),
