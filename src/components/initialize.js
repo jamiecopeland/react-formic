@@ -111,6 +111,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         deleteForm: React.PropTypes.func.isRequired,
         formState: React.PropTypes.object,
         initializeForm: React.PropTypes.func.isRequired,
+        onUnmount: React.PropTypes.func,
         setFormField: React.PropTypes.func.isRequired,
       };
 
@@ -151,8 +152,8 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
       }
 
       componentWillUnmount() {
-        if (config.clearOnUnmount) {
-          this.props.deleteForm();
+        if (this.props.onUnmount) {
+          this.props.onUnmount();
         }
       }
 

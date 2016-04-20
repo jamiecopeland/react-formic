@@ -22,7 +22,7 @@ export const setFormField = createAction(SET_FORM_FIELD);
 const defaultState = Formalizer({});
 
 function _deleteForm(state = defaultState, { payload: { formName } }) {
-  return state.forms.delete(formName);
+  return state.get('forms').delete(formName);
 }
 
 function _initializeForm(state = defaultState, { payload: { form, formName } }) {
@@ -52,13 +52,17 @@ export function formalizerReducer(state = defaultState, action) {
 // --------------------------------------------------
 // Connect wrapper
 
-export const createConnectWrapper = (formalizerBranchAccessor, formName) => connect(
+export const createConnectWrapper = (formalizerBranchAccessor, formName, clearOnUnmount) => connect(
   state => ({
     formState: formalizerBranchAccessor(state).getIn(['forms', formName]),
   }),
   dispatch => ({
-    deleteForm: () => dispatch(initializeForm({ formName })),
+    deleteForm: () => dispatch(deleteForm({ formName })),
     initializeForm: options => dispatch(initializeForm({ ...options, formName })),
     setFormField: options => dispatch(setFormField({ ...options, formName })),
+    onUnmount: () =>
+      clearOnUnmount
+      ? dispatch(deleteForm({ formName }))
+      : () => {},
   }),
 );
