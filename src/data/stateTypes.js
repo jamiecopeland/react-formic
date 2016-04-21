@@ -1,7 +1,8 @@
 import { Map, Record } from 'immutable';
 
 export const Field = Record({
-  isDirty: undefined,
+  isDirty: false,
+  isRequired: false,
   value: undefined,
   validity: undefined,
   validityMessage: undefined,

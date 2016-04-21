@@ -47,14 +47,12 @@ export function fieldIsValid(field) {
   return field.validity === VALID && shouldValidateField(field);
 }
 
-export function formIsInvalid(form) {
-  return form.validity === VALID || form.validity === undefined;
+export function allRequiredFieldsAreValid(fields) {
+  return fields.every((field) =>
+    !field.isRequired || (field.isRequired && field.validity === VALID)
+  );
 }
 
-export function formIsPending(form) {
-  return form.validity === VALID;
-}
-
-export function formIsValid(form) {
-  return form.validity === VALID;
+export function getFormValidity({ fields }) {
+  return allRequiredFieldsAreValid(fields) ? VALID : INVALID;
 }

@@ -2,18 +2,20 @@ import React from 'react';
 import classNames from 'classnames';
 
 import connectForm from '../connectors/connectForm';
-import { formIsInvalid, formIsPending, formIsValid } from '../../utils/validationUtils';
+import { getFormValidity } from '../../utils/validationUtils';
+import { INVALID, PENDING, VALID } from '../../constants/validationStates';
 
 const SubmitButton = (props) => {
   const { className, form, onClick, tag = 'a' } = props;
-  const isValid = formIsValid(form);
+  const formValidity = getFormValidity(form);
+  const isValid = formValidity === VALID;
 
   return (
     React.createElement(tag, {
       ...props,
       className: classNames(className, {
-        invalid: formIsInvalid(form),
-        pending: formIsPending(form),
+        invalid: formValidity === INVALID,
+        pending: formValidity === PENDING,
         valid: isValid,
       }),
       disabled: !isValid,

@@ -83,20 +83,23 @@ function createFieldChangeHandlers(
 
 function createEmptyForm(fields) {
   return new Form({
-    fields: Map(mapObjectToObject(fields, field => new Field({
-      value: field.initialValues ? field.initialValues.value : undefined,
-    }))),
+    fields: Map(mapObjectToObject(fields, ({ initialValues }) => Field(
+      initialValues
+      ? {
+        value: initialValues.value,
+        isRequired: initialValues.isRequired,
+      }
+      : {}
+    ))),
   });
 }
 
-
-
 function getFieldsWithDiff(formState1, formState2) {
-  return formState2.fields.reduce((acc, field, fieldName) => {
-    return !formState1 || field !== formState1.fields.get(fieldName)
+  return formState2.fields.reduce((acc, field, fieldName) =>
+    !formState1 || field !== formState1.fields.get(fieldName)
       ? acc.set(fieldName, field)
-      : acc;
-  }, Map({}));
+      : acc
+  , Map({}));
 }
 
 function defaultMapFormToProps(formState) {
@@ -108,7 +111,6 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
     class WrapperComponent extends React.Component {
 
       static propTypes = {
-        deleteForm: React.PropTypes.func.isRequired,
         formState: React.PropTypes.object,
         initializeForm: React.PropTypes.func.isRequired,
         onUnmount: React.PropTypes.func,
@@ -125,7 +127,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         return {
           getFormFieldState: this.getFormFieldState,
           getFormFieldChangeHandler: this.getFormFieldChangeHandler,
-          getFormState: this.getFormalizerForm,
+          getFormState: this.getFormState,
         };
       }
 
@@ -139,7 +141,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
           fields, this.triggerFieldMap, this.fieldValidators, this.getFormState, setFormField
         );
 
-        // Only create an empty for state if one doesn't already exist. State can persist after a
+        // Only create an empty formState if one doesn't already exist. State can persist after a
         // form unmounts if the reduxPersistenceWrapper is being used.
         if (!formState) {
           initializeForm({ form: createEmptyForm(fields), formName: name });
@@ -148,7 +150,10 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
 
       componentWillReceiveProps(nextProps) {
         getFieldsWithDiff(this.props.formState, nextProps.formState)
-        .forEach((field, fieldName) => this.fieldValidators[fieldName].subject.onNext(field.value));
+        .forEach((field, fieldName) => {
+          this.fieldValidators[fieldName].subject.onNext(field.value);
+          // console.log('triggering stream: ', fieldName, field.value);
+        });
       }
 
       componentWillUnmount() {
