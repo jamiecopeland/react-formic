@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Map, is } from 'immutable';
 
-import { Field, Form, Formalizer } from '../data/statTypes';
+import { Field, Form, Formalizer } from '../data/stateTypes';
 import {
   DELETE_FORM,
   INITIALIZE_FORM,
