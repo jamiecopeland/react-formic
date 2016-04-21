@@ -6,6 +6,7 @@
     "build": "babel src --out-dir lib",
     "test": "karma start"
   },
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": ""
