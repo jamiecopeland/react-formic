@@ -20,14 +20,18 @@ export function runSynchronousValidators(validators, value) {
   return { value, validity, validityMessage: message };
 }
 
+export function fieldIsValidatable(field) {
+  return field.isDirty || field.value;
+}
+
 export function fieldIsValid(field) {
-  return field.validity === VALID;
+  return field.validity === VALID && fieldIsValidatable(field);
 }
 
 export function fieldIsInvalid(field) {
-  return field.validity === INVALID && field.isDirty;
+  return field.validity === INVALID && fieldIsValidatable(field);
 }
 
 export function fieldIsPending(field) {
-  return field.validity === PENDING;
+  return field.validity === PENDING && fieldIsValidatable(field);
 }
