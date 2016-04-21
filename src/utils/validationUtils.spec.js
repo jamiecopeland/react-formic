@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import { expect } from 'chai';
 
-import { INVALID, VALID } from '../constants/validationStates';
+import { INVALID, VALID } from '../constants/validity';
 import { validate } from './validationUtils';
 
 describe('validationUtils', () => {

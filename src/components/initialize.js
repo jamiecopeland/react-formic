@@ -2,7 +2,7 @@ import React from 'react';
 import { Map } from 'immutable';
 import { Subject } from 'rx';
 
-import { INVALID } from '../constants/validationStates';
+import { INVALID } from '../constants/validity';
 import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
 import {
   Field,

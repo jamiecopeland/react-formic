@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import connectForm from '../connectors/connectForm';
 import { getFormValidity } from '../../utils/validationUtils';
-import { INVALID, PENDING, VALID } from '../../constants/validationStates';
+import { INVALID, PENDING, VALID } from '../../constants/validity';
 
 const SubmitButton = (props) => {
   const { className, form, onClick, tag = 'a' } = props;

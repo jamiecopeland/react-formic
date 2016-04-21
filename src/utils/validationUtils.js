@@ -1,4 +1,4 @@
-import { INVALID, PENDING, VALID } from '../constants/validationStates';
+import { INVALID, PENDING, VALID } from '../constants/validity';
 
 /**
  * Checks a value against multiple validators, returning either the first one to fail or an object
