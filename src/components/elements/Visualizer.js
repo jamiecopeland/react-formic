@@ -1,6 +1,7 @@
 import React from 'react';
 
 import connectForm from '../connectors/connectForm';
+import { getFormValidity } from '../../utils/validationUtils';
 import { VALID, INVALID, PENDING } from '../../constants/validity';
 
 const tableStyle = {
@@ -41,7 +42,7 @@ const propertyNameCellStyle = {
   borderBottom: 'solid 1px #DDD',
 };
 
-const propertyNames = ['validity', 'validityMessage', 'value'].sort();
+const propertyNames = ['isRequired', 'validity', 'validityMessage', 'value'].sort();
 
 function cleanValue(value) {
   let output;
@@ -76,13 +77,19 @@ const Visualizer = ({ form, style }) => (
     <table style={tableStyle}>
       <thead>
         <tr>
-          <td colSpan="2" style={titleStyle}>Formalizer Visualizer</td>
+          <td
+            colSpan="2"
+            style={{
+              ...titleStyle,
+              backgroundColor: validityColorMap[getFormValidity(form)]
+            }}
+          >Visualizer</td>
         </tr>
       </thead>
       <tbody>
         {
-          Object.keys(form.fields).sort().reduce((acc, fieldName) => {
-            const field = form.fields[fieldName];
+
+          form.fields.entrySeq().sort(([a], [b]) => a > b).reduce((acc, [fieldName, field]) => {
             return acc.concat([
               <tr key={fieldName}>
                 <td colSpan="2" style={fieldTitleCellStyle}>
@@ -92,7 +99,7 @@ const Visualizer = ({ form, style }) => (
             ])
             .concat(
               propertyNames
-              .filter(key => field[key] !== undefined)
+              // .filter(key => field[key] !== undefined)
               .map(key => (
                 <tr key={`${fieldName}-${key}`}>
                   <td style={propertyNameCellStyle}>{key}</td>
@@ -108,6 +115,7 @@ const Visualizer = ({ form, style }) => (
         }
       </tbody>
     </table>
+
   </div>
 );
 
