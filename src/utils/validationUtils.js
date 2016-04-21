@@ -1,37 +1,48 @@
 import { INVALID, PENDING, VALID } from '../constants/validationStates';
 
-export function runSynchronousValidators(validators, value) {
-  let validity = VALID;
-  let message;
+/**
+ * Checks a value against multiple validators, returning either the first one to fail or an object
+ * representing that the value is valid. Both the individual validators this method return objects
+ * shaped as below:
+ * {
+ *   validity: VALID,
+ * }
+ * or
+ * {
+ *   validity: INVALID,
+ *   validityMessage: 'Must be a valid email address',
+ * }
+ *
+ * @param  {Array}  validators  A list of validators
+ * @param  {*}      value       The value to be validated
+ * @return {object} An object describing the validity
+ */
+export function validate(validators, value) {
+  let output = { validity: VALID };
 
-  // TODO Tidy this with Array.some
-  // Have to use old fashioned for loop because functional forEach loops can't be broken
-  for (let i = 0; i < validators.length; i++) {
-    const validator = validators[i];
-    const validatorOutput = validator(value);
-
-    if (validatorOutput.validity === INVALID) {
-      validity = INVALID;
-      message = validatorOutput.message;
+  for (const validator of validators) {
+    const { validity, validityMessage } = validator(value);
+    if (validity === INVALID) {
+      output = { validity, validityMessage };
       break;
     }
   }
 
-  return { value, validity, validityMessage: message };
+  return output;
 }
 
-export function fieldIsValidatable(field) {
+export function shouldValidateField(field) {
   return field.isDirty || field.value;
 }
 
 export function fieldIsValid(field) {
-  return field.validity === VALID && fieldIsValidatable(field);
+  return field.validity === VALID && shouldValidateField(field);
 }
 
 export function fieldIsInvalid(field) {
-  return field.validity === INVALID && fieldIsValidatable(field);
+  return field.validity === INVALID && shouldValidateField(field);
 }
 
 export function fieldIsPending(field) {
-  return field.validity === PENDING && fieldIsValidatable(field);
+  return field.validity === PENDING && shouldValidateField(field);
 }
