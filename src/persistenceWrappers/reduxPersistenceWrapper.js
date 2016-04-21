@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 
 import { Formalizer } from '../data/stateTypes';
+import { VALID } from '../constants/validationStates';
 
 // --------------------------------------------------
 // Action creators
@@ -58,8 +59,8 @@ export const createConnectWrapper = (formalizerBranchAccessor, formName, clearOn
   }),
   dispatch => ({
     deleteForm: () => dispatch(deleteForm({ formName })),
-    initializeForm: options => dispatch(initializeForm({ ...options, formName })),
-    setFormField: options => dispatch(setFormField({ ...options, formName })),
+    initializeForm: ({form}) => dispatch(initializeForm({ form, formName })),
+    setFormField: ({field, fieldName}) => dispatch(setFormField({ field, fieldName, formName })),
     onUnmount: () =>
       clearOnUnmount
       ? dispatch(deleteForm({ formName }))
