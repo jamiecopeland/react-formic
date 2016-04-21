@@ -35,14 +35,26 @@ export function shouldValidateField(field) {
   return field.isDirty || field.value;
 }
 
-export function fieldIsValid(field) {
-  return field.validity === VALID && shouldValidateField(field);
-}
-
 export function fieldIsInvalid(field) {
   return field.validity === INVALID && shouldValidateField(field);
 }
 
 export function fieldIsPending(field) {
   return field.validity === PENDING && shouldValidateField(field);
+}
+
+export function fieldIsValid(field) {
+  return field.validity === VALID && shouldValidateField(field);
+}
+
+export function formIsInvalid(form) {
+  return form.validity === VALID || form.validity === undefined;
+}
+
+export function formIsPending(form) {
+  return form.validity === VALID;
+}
+
+export function formIsValid(form) {
+  return form.validity === VALID;
 }
