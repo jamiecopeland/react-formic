@@ -48,9 +48,15 @@ export function fieldIsValid(field) {
 }
 
 export function allRequiredFieldsAreValid(fields) {
-  return fields.every((field) =>
-    !field.isRequired || (field.isRequired && field.validity === VALID)
-  );
+  return fields.every(field => (
+    !(field.isDirty && field.validity === INVALID)
+    &&
+    (
+      !field.isRequired
+      ||
+      (field.isRequired && field.validity === VALID)
+    )
+  ));
 }
 
 export function getFormValidity({ fields }) {
