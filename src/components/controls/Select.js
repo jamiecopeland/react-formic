@@ -3,8 +3,8 @@ import React from 'react';
 import connectField from '../connectors/connectField';
 
 const Select = props => {
-  const { children } = props;
-  const { field: { value, onChange } } = props;
+  const { children, onChange } = props;
+  const { field: { value } } = props;
 
   return (
     <select {...props} value={value} onChange={event => onChange(event.target.value)}>
@@ -21,6 +21,7 @@ Select.propTypes = {
   children: React.PropTypes.node, // TODO check this type is correct for <option />
   className: React.PropTypes.string,
   field: React.PropTypes.object,
+  onChange: React.PropTypes.func.isRequired,
   value: React.PropTypes.string,
 };
 
