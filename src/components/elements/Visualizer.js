@@ -1,6 +1,6 @@
 import React from 'react';
 
-import connectForm from '../connectForm';
+import connectForm from '../connectors/connectForm';
 import { VALID, INVALID, PENDING } from '../../constants/validationStates';
 
 const tableStyle = {
