@@ -31,20 +31,20 @@ export function validate(validators, value) {
   return output;
 }
 
-export function shouldValidateField(field) {
+export function shouldDisplayValidity(field) {
   return field.isDirty || field.value;
 }
 
 export function fieldIsInvalid(field) {
-  return field.validity === INVALID && shouldValidateField(field);
+  return field.validity === INVALID && shouldDisplayValidity(field);
 }
 
 export function fieldIsPending(field) {
-  return field.validity === PENDING && shouldValidateField(field);
+  return field.validity === PENDING && shouldDisplayValidity(field);
 }
 
 export function fieldIsValid(field) {
-  return field.validity === VALID && shouldValidateField(field);
+  return field.validity === VALID && shouldDisplayValidity(field);
 }
 
 export function allRequiredFieldsAreValid(fields) {

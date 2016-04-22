@@ -3,18 +3,14 @@ import classNames from 'classnames';
 
 import connectField from '../connectors/connectField';
 import { CHECKED, UNCHECKED } from '../../constants/checkboxStates';
-import { fieldIsInvalid, fieldIsPending, fieldIsValid } from '../../utils/validationUtils';
+import { getValidityClassNames } from '../../utils/controlUtils';
 
 const Input = (props) => {
   const { className, type, value, field, onChange } = props;
 
   const proxyProps = {
     ...props,
-    className: classNames(className, {
-      invalid: fieldIsInvalid(field),
-      pending: fieldIsPending(field),
-      valid: fieldIsValid(field),
-    }),
+    className: classNames(className, getValidityClassNames(field)),
     onChange: event => {
       switch (type) {
         case 'radio':

@@ -8,6 +8,7 @@ export { default as ErrorMessage } from './components/controls/ErrorMessage';
 export { default as Input } from './components/controls/Input';
 export { default as Select } from './components/controls/Select';
 export { default as SubmitButton } from './components/controls/SubmitButton';
+export { default as TextArea } from './components/controls/TextArea';
 export { default as Visualizer } from './components/elements/Visualizer';
 
 // Utils
