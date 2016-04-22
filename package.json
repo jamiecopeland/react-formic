@@ -1,29 +1,13 @@
 {
   "name": "react-formic",
-  "version": "0.2.4",
-  "description": "Form niceness for React",
+  "version": "0.2.5",
+  "description": "A React form library with RxJS validation streams ",
+  "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
     "prepublish": "npm run build",
     "test": "karma start"
   },
-  "main": "lib/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jamiecopeland/react-formic.git"
-  },
-  "keywords": [
-    "formic",
-    "form",
-    "validation",
-    "react",
-    "rxjs"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jamiecopeland/react-formic/issues"
-  },
-  "homepage": "http://redux.js.org",
   "dependencies": {
     "babel-polyfill": "^6.3.14",
     "immutable": "^3.7.6",
@@ -73,5 +57,24 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.9.11"
-  }
+  },
+  "homepage": "https://github.com/jamiecopeland/react-formic",
+  "bugs": {
+    "url": "https://github.com/jamiecopeland/react-formic/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamiecopeland/react-formic.git"
+  },
+  "authors": [
+    "Jamie Copeland (https://github.com/jamiecopeland)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "formic",
+    "form",
+    "validation",
+    "react",
+    "rxjs"
+  ]
 }
