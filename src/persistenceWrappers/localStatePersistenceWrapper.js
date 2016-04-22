@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-export const wrap = FormComponent => {
+export const connectLocalState = FormComponent => {
   class LocalStatePersistenceWrapper extends Component {
 
     constructor(props) {

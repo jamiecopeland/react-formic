@@ -1,18 +1,19 @@
 {
-  "name": "formalizer",
-  "version": "0.2.2",
+  "name": "react-formic",
+  "version": "0.2.4",
   "description": "Form niceness for React",
   "scripts": {
     "build": "babel src --out-dir lib",
+    "prepublish": "npm run build",
     "test": "karma start"
   },
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/jamiecopeland/react-formic.git"
   },
   "keywords": [
-    "formalizer",
+    "formic",
     "form",
     "validation",
     "react",
@@ -20,7 +21,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/jamiecopeland/react-formic/issues"
   },
   "homepage": "http://redux.js.org",
   "dependencies": {

@@ -6,7 +6,7 @@ import { fieldIsInvalid } from '../../utils/validationUtils';
 const ErrorMessage = ({ field, component: WrappedComponent }) => {
   if (!field) {
     // TODO Add nicer message about where to add field
-    console.warn(`Formalizer - ErrorMessage component has no corresponding field: ${fieldName}`); // eslint-disable-line
+    console.warn(`Formic - ErrorMessage component has no corresponding field: ${fieldName}`); // eslint-disable-line
   }
 
   return (

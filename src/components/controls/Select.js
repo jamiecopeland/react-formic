@@ -13,10 +13,6 @@ const Select = props => {
   );
 };
 
-Select.contextTypes = {
-  formalizer: React.PropTypes.object,
-};
-
 Select.propTypes = {
   children: React.PropTypes.node, // TODO check this type is correct for <option />
   className: React.PropTypes.string,

@@ -1,6 +1,6 @@
 import { Iterable } from 'immutable';
 
-import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
+import { mapObjectToObject } from './objectUtils';
 
 /**
  * console.log but with toJS being called on iterable/immutable objects

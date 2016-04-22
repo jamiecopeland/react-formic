@@ -3,11 +3,11 @@ import { Map } from 'immutable';
 import { Subject } from 'rx';
 
 import { INVALID } from '../constants/validity';
-import { mapObjectToObject } from 'formalizer/lib/utils/objectUtils';
+import { mapObjectToObject } from '../utils/objectUtils';
 import {
   Field,
   Form,
-} from 'formalizer/lib/data/stateTypes';
+} from '../data/stateTypes';
 
 function cleanValidationOutput({ validity, validityMessage }) {
   return {

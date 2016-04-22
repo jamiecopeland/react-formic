@@ -1,17 +1,17 @@
 import { expect } from 'chai';
 import { Map, is } from 'immutable';
 
-import { Field, Form, Formalizer } from '../data/stateTypes';
+import { Field, Form, Formic } from '../data/stateTypes';
 import {
   DELETE_FORM,
   INITIALIZE_FORM,
   SET_FORM_FIELD,
 
-  formalizerReducer,
+  formicReducer,
 } from './reduxPersistenceWrapper';
 
-const stateEmpty = new Formalizer();
-const statePopulated = new Formalizer({
+const stateEmpty = new Formic();
+const statePopulated = new Formic({
   forms: Map({
     signup: Form({
       fields: Map({
@@ -39,7 +39,7 @@ describe('reduxPersistenceWrapper', () => {
           formName: 'signup',
         },
       };
-      const newState = formalizerReducer(statePopulated, action);
+      const newState = formicReducer(statePopulated, action);
       expect(newState.getIn(['forms', action.payload.formName])).to.equal(action.payload.form);
     });
   });
@@ -59,7 +59,7 @@ describe('reduxPersistenceWrapper', () => {
           formName: 'signup',
         },
       };
-      const newState = formalizerReducer(stateEmpty, action);
+      const newState = formicReducer(stateEmpty, action);
       expect(newState.getIn(['forms', action.payload.formName])).to.equal(action.payload.form);
     });
   });
@@ -78,7 +78,7 @@ describe('reduxPersistenceWrapper', () => {
         },
       };
 
-      const newState = formalizerReducer(statePopulated, action);
+      const newState = formicReducer(statePopulated, action);
       expect(is(newState.getIn(['forms', 'signup', 'fields', 'firstName']), action.payload.field))
         .to.equal(true);
     });
@@ -96,7 +96,7 @@ describe('reduxPersistenceWrapper', () => {
         },
       };
 
-      const newState = formalizerReducer(statePopulated, action);
+      const newState = formicReducer(statePopulated, action);
       const expectedField = new Field({
         value: statePopulated.getIn(['forms', 'signup', 'fields', 'firstName', 'value']),
         validity: action.payload.field.get('validity'),

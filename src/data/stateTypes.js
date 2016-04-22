@@ -13,6 +13,6 @@ export const Form = Record({
   validity: undefined,
 });
 
-export const Formalizer = Record({
+export const Formic = Record({
   forms: Map({}),
 });

@@ -10,18 +10,14 @@ const connectControl = (mapFieldValuesToProps = defaultMapFieldValuesToProps) =>
     const fieldState = getFormFieldState(fieldName);
     const changeHandler = getFormFieldChangeHandler(fieldName);
 
-    // console.log('changeHandler: ', changeHandler);
-
-    // const field = getFormalizerField(props.fieldName);
-
     // const { fieldName } = props;
     // if (!fieldName) {
-    //   throw new Error('Formalizer inputs require prop "fieldName"');
+    //   throw new Error('Formic inputs require prop "fieldName"');
     // }
 
-    // if (!field) {
+    // if (!fieldState) {
     //   throw new Error(
-    //     `Formalizer cannot find a corresponding field for input with fieldName "${fieldName}". `
+    //     `Formic cannot find a corresponding field for input with fieldName "${fieldName}". `
     //     + 'Check that the config for this form has a field defined by that name'
     //   );
     // }

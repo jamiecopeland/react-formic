@@ -1,25 +1,25 @@
 import { connect } from 'react-redux';
 
-import { Formalizer } from '../data/stateTypes';
+import { Formic } from '../data/stateTypes';
 
 // --------------------------------------------------
 // Action creators
 
 const createAction = type => payload => ({ type, payload });
 
-export const DELETE_FORM = 'formalizer.DELETE_FORM';
+export const DELETE_FORM = 'formic.DELETE_FORM';
 export const deleteForm = createAction(DELETE_FORM);
 
-export const INITIALIZE_FORM = 'formalizer.INITIALIZE_FORM';
+export const INITIALIZE_FORM = 'formic.INITIALIZE_FORM';
 export const initializeForm = createAction(INITIALIZE_FORM);
 
-export const SET_FORM_FIELD = 'formalizer.SET_FORM_FIELD';
+export const SET_FORM_FIELD = 'formic.SET_FORM_FIELD';
 export const setFormField = createAction(SET_FORM_FIELD);
 
 // --------------------------------------------------
 // Reducer
 
-const defaultState = Formalizer({});
+const defaultState = Formic({});
 
 function _deleteForm(state = defaultState, { payload: { formName } }) {
   return state.get('forms').delete(formName);
@@ -44,7 +44,7 @@ const reducerMap = {
   [SET_FORM_FIELD]: _setFormField,
 };
 
-export function formalizerReducer(state = defaultState, action) {
+export function formicReducer(state = defaultState, action) {
   const reducer = reducerMap[action.type];
   return reducer ? reducer(state, action) : state;
 }
@@ -52,17 +52,20 @@ export function formalizerReducer(state = defaultState, action) {
 // --------------------------------------------------
 // Connect wrapper
 
-export const createConnectWrapper = (formalizerBranchAccessor, formName, clearOnUnmount) => connect(
-  state => ({
-    formState: formalizerBranchAccessor(state).getIn(['forms', formName]),
-  }),
-  dispatch => ({
-    deleteForm: () => dispatch(deleteForm({ formName })),
-    initializeForm: ({ form }) => dispatch(initializeForm({ form, formName })),
-    setFormField: ({ field, fieldName }) => dispatch(setFormField({ field, fieldName, formName })),
-    onUnmount: () =>
-      clearOnUnmount
-      ? dispatch(deleteForm({ formName }))
-      : () => {},
-  }),
-);
+export function connectRedux(formicBranchAccessor, formName, clearOnUnmount) {
+  return connect(
+    state => ({
+      formState: formicBranchAccessor(state).getIn(['forms', formName]),
+    }),
+    dispatch => ({
+      deleteForm: () => dispatch(deleteForm({ formName })),
+      initializeForm: ({ form }) => dispatch(initializeForm({ form, formName })),
+      setFormField: ({ field, fieldName }) =>
+        dispatch(setFormField({ field, fieldName, formName })),
+      onUnmount: () =>
+        clearOnUnmount
+        ? dispatch(deleteForm({ formName }))
+        : () => {},
+    }),
+  );
+}
