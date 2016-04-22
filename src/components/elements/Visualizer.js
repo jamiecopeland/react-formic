@@ -4,6 +4,10 @@ import connectForm from '../connectors/connectForm';
 import { getFormValidity } from '../../utils/validationUtils';
 import { VALID, INVALID, PENDING } from '../../constants/validity';
 
+const componentStyle = {
+  'max-width': '400px',
+};
+
 const tableStyle = {
   backgroundColor: '#EFEFEF',
 };
@@ -73,7 +77,7 @@ const validityColorMap = {
 };
 
 const Visualizer = ({ form, style }) => (
-  <div style={style}>
+  <div style={{...componentStyle, ...style}}>
     <table style={tableStyle}>
       <thead>
         <tr>
