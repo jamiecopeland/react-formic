@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { batchedSubscribe } from 'redux-batched-subscribe';
 import createLogger from 'redux-logger';
+import thunkMiddleware from 'redux-thunk';
 
 import { toJS } from 'react-formic/lib/utils/immutableUtils';
 import rootReducer from '../reducers';
@@ -15,7 +16,8 @@ export default function configureStore(initialState) {
         actionTransformer: action => toJS(action),
       })
     ),
-
+    // Prevent unecessary re-renders
+    batchedSubscribe((notify) => requestAnimationFrame(notify)),
     // TODO Add this conditionally
     window.devToolsExtension ? window.devToolsExtension() : f => f
   )(createStore);

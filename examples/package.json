@@ -3,9 +3,9 @@
   "description": "React Formic implementation examples",
   "version": "0.0.0",
   "scripts": {
-   "start": "gulp startDevelopment",
-   "startProduction": "gulp startProduction",
-   "test": "karma start"
+    "start": "gulp startDevelopment",
+    "startProduction": "gulp startProduction",
+    "test": "karma start"
   },
   "dependencies": {
     "babel-polyfill": "^6.7.4",
@@ -25,6 +25,7 @@
     "react-router-redux": "^4.0.2",
     "redux": "^3.2.1",
     "redux-actions": "^0.9.1",
+    "redux-batched-subscribe": "^0.1.4",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^1.0.3",
     "rx": "^4.1.0",
