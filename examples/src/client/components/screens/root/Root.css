@@ -1,0 +1,19 @@
+
+.Root {
+  &_NavList {
+    clear: fix;
+    background-color: #07B799;
+  }
+
+  &_NavLink {
+    float: left;
+  }
+
+  &_NavLink {
+    color: white;
+    // font-weight: bold;
+    font-size: 1.5rem;
+    padding: 1rem;
+    text-decoration: none;
+  }
+}
