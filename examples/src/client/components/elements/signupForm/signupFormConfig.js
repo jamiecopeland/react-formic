@@ -97,7 +97,7 @@ export default {
       //   })),
 
       isRequired: true,
-      transformStream: valueStream => valueStream
+      valueStream: valueStream => valueStream
         .startWith('darth@deathstar.com'),
         // .map(value => value.toLowerCase()),
         // .do((value) => { console.log('value: ', value); }),

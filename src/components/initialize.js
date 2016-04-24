@@ -90,12 +90,12 @@ function createEmptyForm(fields) {
 
 function createValueStream(fields, changeHandlers) {
   const formValueStream = Object.keys(fields).reduce((acc, fieldName) => {
-    const { transformStream } = fields[fieldName];
+    const { valueStream: modifiedStream } = fields[fieldName];
     const { valueStream } = changeHandlers[fieldName];
     return acc.merge(
       (
-        transformStream
-        ? transformStream(valueStream)
+        modifiedStream
+        ? modifiedStream(valueStream)
         : valueStream
       )
       .map(value => ({ [fieldName]: { value } })));
