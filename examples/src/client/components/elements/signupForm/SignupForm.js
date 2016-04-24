@@ -48,14 +48,9 @@ const languagesWithCTA = [
 const TWEET_LENGTH = 140;
 
 const SignupForm = ({ form }) => {
-
-  const tweetValue = form.fields.get('tweet').value;
-  const tweetRemainingChars = tweetValue ? TWEET_LENGTH - tweetValue.length : TWEET_LENGTH;
-
   return (
   <div className="SignupForm">
     <h1 className="SignupForm-Title">SignupForm</h1>
-
       <div className="FormField">
         <div className="FormLabel">Email*</div>
         <Input
@@ -67,7 +62,6 @@ const SignupForm = ({ form }) => {
         <div className="FormExplanation">Debounced validation</div>
       </div>
 
-
       <div className="FormField">
         <div className="FormLabel">UserName*</div>
         <Input
@@ -78,6 +72,8 @@ const SignupForm = ({ form }) => {
         <FieldErrorRight fieldName="userName" />
         <div className="FormExplanation">Remote api check for uniquness</div>
       </div>
+
+      {/*
 
       <div className="FormField">
         <div className="FormLabel">Credit Card Number*</div>
@@ -214,6 +210,8 @@ const SignupForm = ({ form }) => {
           Submit button becomes clickable when the whole form is valid
         </div>
       </div>
+
+      */}
       {/*
         <Visualizer style={{
           position: 'absolute',

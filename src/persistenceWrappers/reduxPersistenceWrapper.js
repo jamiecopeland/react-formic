@@ -1,9 +1,7 @@
-import { Map } from 'immutable';
+import { fromJS, Map } from 'immutable';
 import { connect } from 'react-redux';
-import purdy from 'purdy';
 
 import { Field, Formic } from '../data/stateTypes';
-import { mapObjectToObject } from '../utils/objectUtils';
 
 // --------------------------------------------------
 // Action creators
@@ -49,8 +47,7 @@ function _setFormFields(
 ) {
   return state.setIn(
     ['forms', formName, 'fields'],
-    state.getIn(['forms', formName, 'fields'])
-      .mergeDeep(Map(mapObjectToObject(fields, field => Map(field))))
+    state.getIn(['forms', formName, 'fields']).mergeDeep(fromJS(fields))
   );
 }
 
@@ -79,8 +76,9 @@ export function connectRedux(formicBranchAccessor, formName, clearOnUnmount) {
       initializeForm: ({ form }) => dispatch(initializeForm({ form, formName })),
       setFormField: ({ field, fieldName }) =>
         dispatch(setFormField({ field, fieldName, formName })),
-      setFormFields: ({ fields }) =>
-        dispatch(setFormFields({ fields, formName })),
+      setFormFields: ({ fields }) => {
+        dispatch(setFormFields({ fields, formName }));
+      },
       onUnmount: () =>
         clearOnUnmount
         ? dispatch(deleteForm({ formName }))

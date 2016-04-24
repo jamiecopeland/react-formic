@@ -1,7 +1,7 @@
-import Rx from 'rx';
+import { Observable } from 'rx';
 
 export function createStreamFromSuperagentRequest(request, shouldAbortOnDispose = true) {
-  return Rx.Observable.create(observer => {
+  return Observable.create(observer => {
     const call = request
       .end((err, response) => {
         if (err) {

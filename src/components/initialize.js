@@ -1,6 +1,6 @@
 import React from 'react';
 import { Map } from 'immutable';
-import { Subject } from 'rx';
+import { Observable, Subject } from 'rx';
 
 import { INVALID } from '../constants/validity';
 import { mapObjectToObject } from '../utils/objectUtils';
@@ -65,19 +65,13 @@ function triggerRelatedFields(relatedFields, fieldValidators, getFormState, setF
   });
 }
 
-function createFieldChangeHandlers(
-  configFields, triggerFieldMap, fieldValidators, getFormState, setFormField
-) {
-  return mapObjectToObject(configFields, (field, fieldName) => value => {
-    setFormField({
-      fieldName,
-      field: Map({
-        isDirty: true,
-        value: field.transform ? field.transform(value) : value,
-      }),
-    });
-
-    triggerRelatedFields(triggerFieldMap[fieldName], fieldValidators, getFormState, setFormField);
+function createFieldChangeHandlers(fields) {
+  return mapObjectToObject(fields, () => {
+    const subject = new Subject();
+    return {
+      valueStream: subject,
+      onChange: value => subject.onNext(value),
+    };
   });
 }
 
@@ -94,6 +88,22 @@ function createEmptyForm(fields) {
   });
 }
 
+function createValueStream(fields, changeHandlers) {
+  const formValueStream = Object.keys(fields).reduce((acc, fieldName) => {
+    const { transformStream } = fields[fieldName];
+    const { valueStream } = changeHandlers[fieldName];
+    return acc.merge(
+      (
+        transformStream
+        ? transformStream(valueStream)
+        : valueStream
+      )
+      .map(value => ({ [fieldName]: { value } })));
+  }, Observable.create(() => {}));
+  return formValueStream
+    .scan((acc, stream) => ({ ...acc, ...stream }));
+}
+
 function getFieldsWithDiff(formState1, formState2) {
   return formState2.fields.reduce((acc, field, fieldName) =>
     !formState1 || field !== formState1.fields.get(fieldName)
@@ -101,6 +111,8 @@ function getFieldsWithDiff(formState1, formState2) {
       : acc
   , Map({}));
 }
+
+// --------------------------------------------------
 
 function defaultMapFormToProps(formState) {
   return { form: formState };
@@ -138,15 +150,16 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
 
         this.triggerFieldMap = createTriggerFieldMap(fields);
         this.fieldValidators = createFieldValidators(fields, this.getFormState, setFormField);
-        this.fieldChangeHandlers = createFieldChangeHandlers(
-          fields, this.triggerFieldMap, this.fieldValidators, this.getFormState, setFormField
-        );
+        this.fieldChangeHandlers = createFieldChangeHandlers(fields);
 
         // Only create an empty formState if one doesn't already exist. State can persist after a
         // form unmounts if the reduxPersistenceWrapper is being used.
         if (!formState) {
           initializeForm({ form: createEmptyForm(fields), formName: name });
         }
+
+        createValueStream(fields, this.fieldChangeHandlers)
+        .subscribe(newFields => this.props.setFormFields({ fields: newFields }));
       }
 
       componentWillReceiveProps(nextProps) {
@@ -154,6 +167,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         .forEach((field, fieldName) => {
           this.fieldValidators[fieldName].subject.onNext(field.value);
           // console.log('triggering stream: ', fieldName, field.value);
+          // TODO trigger related fields
         });
       }
 
@@ -165,7 +179,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
 
       getFormFieldState = fieldName => this.props.formState.getIn(['fields', fieldName])
 
-      getFormFieldChangeHandler = fieldName => this.fieldChangeHandlers[fieldName]
+      getFormFieldChangeHandler = fieldName => this.fieldChangeHandlers[fieldName].onChange
 
       getFormState = () => this.props.formState
 
@@ -185,4 +199,3 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
 }
 
 export default initialize;
-
