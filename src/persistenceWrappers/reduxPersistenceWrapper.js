@@ -1,6 +1,9 @@
+import { Map } from 'immutable';
 import { connect } from 'react-redux';
+import purdy from 'purdy';
 
-import { Formic } from '../data/stateTypes';
+import { Field, Formic } from '../data/stateTypes';
+import { mapObjectToObject } from '../utils/objectUtils';
 
 // --------------------------------------------------
 // Action creators
@@ -15,6 +18,9 @@ export const initializeForm = createAction(INITIALIZE_FORM);
 
 export const SET_FORM_FIELD = 'formic.SET_FORM_FIELD';
 export const setFormField = createAction(SET_FORM_FIELD);
+
+export const SET_FORM_FIELDS = 'formic.SET_FORM_FIELDS';
+export const setFormFields = createAction(SET_FORM_FIELDS);
 
 // --------------------------------------------------
 // Reducer
@@ -33,15 +39,26 @@ function _setFormField(
   state = defaultState, { payload: { formName, field, fieldName, shouldReplace } }
 ) {
   return shouldReplace
-    ? state.setIn(['forms', formName, 'fields', fieldName], field)
+    ? state.setIn(['forms', formName, 'fields', fieldName], new Field(field))
     : state.setIn(['forms', formName, 'fields', fieldName],
-        state.getIn(['forms', formName, 'fields', fieldName]).merge(field));
+        state.getIn(['forms', formName, 'fields', fieldName]).merge(Map(field)));
+}
+
+function _setFormFields(
+  state = defaultState, { payload: { formName, fields } }
+) {
+  return state.setIn(
+    ['forms', formName, 'fields'],
+    state.getIn(['forms', formName, 'fields'])
+      .mergeDeep(Map(mapObjectToObject(fields, field => Map(field))))
+  );
 }
 
 const reducerMap = {
   [DELETE_FORM]: _deleteForm,
   [INITIALIZE_FORM]: _initializeForm,
   [SET_FORM_FIELD]: _setFormField,
+  [SET_FORM_FIELDS]: _setFormFields,
 };
 
 export function formicReducer(state = defaultState, action) {
@@ -62,6 +79,8 @@ export function connectRedux(formicBranchAccessor, formName, clearOnUnmount) {
       initializeForm: ({ form }) => dispatch(initializeForm({ form, formName })),
       setFormField: ({ field, fieldName }) =>
         dispatch(setFormField({ field, fieldName, formName })),
+      setFormFields: ({ fields }) =>
+        dispatch(setFormFields({ fields, formName })),
       onUnmount: () =>
         clearOnUnmount
         ? dispatch(deleteForm({ formName }))

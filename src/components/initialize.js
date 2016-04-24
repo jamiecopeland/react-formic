@@ -37,7 +37,7 @@ function createFieldValidators(configFields, getFormState, setFormField) {
         value => {
           // console.log('validation', value);
           setFormField({
-            field: Map(cleanValidationOutput(value)),
+            field: cleanValidationOutput(value),
             fieldName,
           });
         }
@@ -57,7 +57,7 @@ function triggerRelatedFields(relatedFields, fieldValidators, getFormState, setF
     // Set the field to dirty if it isn't already
     const fieldToTrigger = getFormState().getIn(['fields', fieldNameToTrigger]);
     if (!fieldNameToTrigger.isDirty) {
-      setFormField({ fieldName: fieldNameToTrigger, field: Map({ isDirty: true }) });
+      setFormField({ fieldName: fieldNameToTrigger, field: { isDirty: true } });
     }
 
     // Trigger the field to revalidate with its current value
@@ -115,6 +115,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         initializeForm: React.PropTypes.func.isRequired,
         onUnmount: React.PropTypes.func,
         setFormField: React.PropTypes.func.isRequired,
+        setFormFields: React.PropTypes.func.isRequired,
       };
 
       static childContextTypes = {

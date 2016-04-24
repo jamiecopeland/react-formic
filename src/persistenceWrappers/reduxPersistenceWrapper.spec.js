@@ -1,14 +1,20 @@
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { Map, is } from 'immutable';
+import chaiImmutable from 'chai-immutable';
+import purdy from 'purdy';
+
+chai.use(chaiImmutable);
 
 import { Field, Form, Formic } from '../data/stateTypes';
 import {
   DELETE_FORM,
   INITIALIZE_FORM,
   SET_FORM_FIELD,
+  SET_FORM_FIELDS,
 
   formicReducer,
 } from './reduxPersistenceWrapper';
+import { INVALID, VALID } from '../constants/validity';
 
 const stateEmpty = new Formic();
 const statePopulated = new Formic({
@@ -16,6 +22,7 @@ const statePopulated = new Formic({
     signup: Form({
       fields: Map({
         firstName: new Field({
+          isRequired: true,
           value: 'Anakin',
         }),
       }),
@@ -70,17 +77,25 @@ describe('reduxPersistenceWrapper', () => {
         type: SET_FORM_FIELD,
         payload: {
           formName: 'signup',
-          field: Field({
+          field: {
             value: 'Darth',
-          }),
+          },
           fieldName: 'firstName',
           shouldReplace: true,
         },
       };
 
       const newState = formicReducer(statePopulated, action);
-      expect(is(newState.getIn(['forms', 'signup', 'fields', 'firstName']), action.payload.field))
-        .to.equal(true);
+      const expectedState = statePopulated
+        .setIn(
+          ['forms', 'signup', 'fields', 'firstName', 'value'],
+          action.payload.field.value
+        )
+        .setIn(
+          ['forms', 'signup', 'fields', 'firstName', 'isRequired'],
+          false
+        );
+      expect(newState).to.deep.equal(expectedState);
     });
 
     it('should merge into field', () => {
@@ -88,22 +103,65 @@ describe('reduxPersistenceWrapper', () => {
         type: SET_FORM_FIELD,
         payload: {
           formName: 'signup',
-          field: Map({
+          field: {
             validity: 'valid',
-          }),
+          },
           fieldName: 'firstName',
           shouldReplace: false,
         },
       };
 
       const newState = formicReducer(statePopulated, action);
-      const expectedField = new Field({
-        value: statePopulated.getIn(['forms', 'signup', 'fields', 'firstName', 'value']),
-        validity: action.payload.field.get('validity'),
-      });
+      const expectedState = statePopulated.setIn(
+        ['forms', 'signup', 'fields', 'firstName', 'validity'],
+        action.payload.field.validity
+      );
 
-      expect(is(newState.getIn(['forms', 'signup', 'fields', 'firstName']), expectedField))
-        .to.equal(true);
+      expect(newState).to.deep.equal(expectedState);
+    });
+  });
+
+  describe('SET_FORM_FIELDS', () => {
+    it('should set previously undefined field value', () => {
+      const action = {
+        type: SET_FORM_FIELDS,
+        payload: {
+          formName: 'signup',
+          fields: {
+            firstName: {
+              validity: VALID,
+            },
+          },
+        },
+      };
+
+      const newState = formicReducer(statePopulated, action);
+      const expectedState = statePopulated.setIn(
+        ['forms', 'signup', 'fields', 'firstName', 'validity'],
+        action.payload.fields.firstName.validity
+      );
+      expect(newState).to.deep.equal(expectedState);
+    });
+
+    it('should set previously defined field value', () => {
+      const action = {
+        type: SET_FORM_FIELDS,
+        payload: {
+          formName: 'signup',
+          fields: {
+            firstName: {
+              value: 'Darth',
+            },
+          },
+        },
+      };
+
+      const newState = formicReducer(statePopulated, action);
+      const expectedState = statePopulated.setIn(
+        ['forms', 'signup', 'fields', 'firstName', 'value'],
+        action.payload.fields.firstName.value
+      );
+      expect(newState).to.deep.equal(expectedState);
     });
   });
 });
