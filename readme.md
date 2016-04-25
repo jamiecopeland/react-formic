@@ -1,26 +1,29 @@
 # React Formic
-Asynchronous form validation made easy
+Asynchronous form validation made easy.
 
-##Introduction
-Callbacks are fine for handling simple events and Promises provide a nicer syntax as well as a [degree of composition](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) but common problems in the development of forms such as debouncing text input and remote validation can quickly become troublesome and result in a lot of hard to fathom spaghetti which almost inevitably turns into bugs and a poor user experience.
+##The problem
 
+As soon as an application moves beyond simple asynchronous flows, callbacks and Promises start to struggle. This point arrives fairly quickly when trying to perfom complex form validations involving debouncing or server-side validation, with code quickly turning into hard to fathom spaghetti.
 
 ##The solution
 
-[RxJS](https://github.com/Reactive-Extensions/RxJS) provides a rich and mature API for dealing with asynchronicity in JavaScript, for example if a form contained a user name field which needed to be checked for uniqueness via a remote call, it can be clearly and declaratively expressed as follows (The output of this stream would be a boolean representing the validity):
+[RxJS](https://github.com/Reactive-Extensions/RxJS) provides a rich and mature API for dealing with asynchronicity in JavaScript. For example, the two problems mentioned above can be solved in three extremely clear and declarative lines:
+
 ```
 userNameInputValueStream
 .debounce(300)
-.flatMapLatest(
-	value => doRemoteValidation(value).map(response => response.body.userNameExists)
-)
+.flatMapLatest(value => isUnique(value).map(response => response.body.userNameExists))
 ```
 
-React Formic provides a way to leverage the useful features of RxJS in this problem space as well as providing an extensible API with default implementations for state storage using component state and Redux.
+The stream above debounces the user name input and checks that it doesn't already exists on the server via the isUnique method that returns a stream containing the server's response. This value is then mapped to a boolean making it easy to consume for the application.
+
+React Formic provides a way to leverage the features of RxJS in this problem space as well as providing an extensible API with default implementations for state storage using component state and Redux.
+
+If you're unfamiliar with RxJS and functional reactive programming, make sure to check out this [excellent introduction](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) by Andre Staltz, author of [Cycle.js](http://cycle.js.org/).
 
 ##Quick start
 
-More explanation coming soon, but for now take a look at the simple implementation below or clone the project and run the examples application for a more fully featured demonstration of multiple input types and more complex validation.
+More documentation is on the way, but for now take a look at the simple implementation below or for a more involved example, clone the project and run the examples application.
 
 ```
 import React from 'react';
