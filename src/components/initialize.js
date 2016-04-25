@@ -1,6 +1,6 @@
 import React from 'react';
 import { Map } from 'immutable';
-import { Observable, Subject } from 'rx';
+import { Subject } from 'rx';
 
 import { INVALID } from '../constants/validity';
 import { mapObjectToObject, forEachPropertyOfObject } from '../utils/objectUtils';

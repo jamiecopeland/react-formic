@@ -6,7 +6,7 @@ import { pipe } from 'ramda';
 import { VALID, INVALID } from 'react-formic/lib/constants/validity';
 import { FORMIC_BRANCH_NAME } from '../../../reducers/index';
 import { connectRedux } from 'react-formic/lib/persistenceWrappers/reduxPersistenceWrapper';
-import { connectLocalState } from 'react-formic/lib/persistenceWrappers/localStatePersistenceWrapper';
+import { connectLocalState } from 'react-formic/lib/persistenceWrappers/localStatePersistenceWrapper'; // eslint-disable-line
 import { createStreamFromSuperagentRequest } from 'react-formic/lib/utils/rxUtils';
 import { CHECKED } from 'react-formic/lib/constants/checkboxStates';
 
@@ -162,11 +162,6 @@ export default {
           const formState = getFormState();
           const billingAddressLine1 = formState.getIn(['fields', 'billingAddressLine1', 'value']);
           const billingAddressLine2 = formState.getIn(['fields', 'billingAddressLine2', 'value']);
-          // console.log('value: ', value);
-          // console.log('billingAddressLine1: ', billingAddressLine1);
-          // console.log('billingAddressLine2: ', billingAddressLine2);
-          // console.log('validate postcode', (!!value || !!billingAddressLine1 || !!billingAddressLine2));
-          // console.log('(value && isLength(value, { min: 2, max: 9 })) ? VALID : INVALID: ', (value && isLength(value, { min: 2, max: 9 })) ? VALID : INVALID);
           const output = (!!value || !!billingAddressLine1 || !!billingAddressLine2)
             ? {
               validity: (value && isLength(value, { min: 2, max: 9 })) ? VALID : INVALID,
@@ -175,9 +170,6 @@ export default {
             : {
               validity: undefined,
             };
-          console.log('formState: ', formState);
-          console.log('output: ', output);
-
           return output;
         }),
       triggerFields: ['billingAddressLine1', 'billingAddressLine2'],
