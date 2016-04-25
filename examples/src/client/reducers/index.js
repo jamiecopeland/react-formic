@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
 import { routerReducer } from 'react-router-redux';
-import { formicReducer } from 'react-formic/lib/persistenceWrappers/reduxPersistenceWrapper';
+import { formicReducer } from 'react-formic/lib/stateWrappers/reduxPersistenceWrapper';
 
 export const ROUTING_BRANCH_NAME = 'routing';
 export const FORMIC_BRANCH_NAME = 'formic';

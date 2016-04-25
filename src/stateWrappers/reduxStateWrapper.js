@@ -66,7 +66,7 @@ export function formicReducer(state = defaultState, action) {
 // --------------------------------------------------
 // Connect wrapper
 
-export function connectRedux(formicBranchAccessor, formName, clearOnUnmount) {
+export function connectReduxState(formicBranchAccessor, formName, clearOnUnmount) {
   return connect(
     state => ({
       formState: formicBranchAccessor(state).getIn(['forms', formName]),

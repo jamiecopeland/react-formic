@@ -5,8 +5,8 @@ import { pipe } from 'ramda';
 
 import { VALID, INVALID } from 'react-formic/lib/constants/validity';
 import { FORMIC_BRANCH_NAME } from '../../../reducers/index';
-import { connectRedux } from 'react-formic/lib/persistenceWrappers/reduxPersistenceWrapper';
-import { connectLocalState } from 'react-formic/lib/persistenceWrappers/localStatePersistenceWrapper'; // eslint-disable-line
+import { connectReduxState } from 'react-formic/lib/stateWrappers/reduxStateWrapper';
+import { connectLocalState } from 'react-formic/lib/stateWrappers/localStateWrapper'; // eslint-disable-line
 import { createStreamFromSuperagentRequest } from 'react-formic/lib/utils/rxUtils';
 import { CHECKED } from 'react-formic/lib/constants/checkboxStates';
 
@@ -53,10 +53,9 @@ export const languages = [
 ];
 
 export default {
-  // persistenceWrapper: connectLocalState,
-  persistenceWrapper: connectRedux(
-    state => state.getIn([FORMIC_BRANCH_NAME]), 'signup', false
-  ),
+  // stateWrapper: connectLocalState,
+  stateWrapper: connectReduxState(state => state.getIn([FORMIC_BRANCH_NAME]), 'signup', false),
+
   fields: {
 
     // Mandatory and synchronous

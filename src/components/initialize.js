@@ -205,7 +205,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
       }
     }
 
-    return config.persistenceWrapper(WrapperComponent);
+    return config.stateWrapper(WrapperComponent);
   };
 }
 
