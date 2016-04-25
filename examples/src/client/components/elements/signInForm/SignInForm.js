@@ -71,7 +71,6 @@ const SignInForm = () => (
     <SubmitButton
       className="Form_SubmitButton"
       style={{ display: 'inline-block' }}
-      tag="a"
       href="#"
       onClick={event => {
         event.preventDefault();
