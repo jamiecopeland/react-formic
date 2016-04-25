@@ -4,7 +4,14 @@ import { syncHistoryWithStore } from 'react-router-redux';
 
 import Root from './components/screens/root/Root';
 import NotFound from './components/screens/notFound/NotFound';
-import SignupScreen from './components/screens/signupScreen/SignupScreen';
+
+
+// Shim form pages
+import SignInForm from './components/elements/signInForm/SignInForm';
+import SignUpForm from './components/elements/signUpForm/SignUpForm';
+
+const SignInScreen = () => (<SignInForm />);
+const SignUpScreen = () => (<SignUpForm />);
 
 export function createRoutes(store) {
   const history = syncHistoryWithStore(browserHistory, store, {
@@ -14,7 +21,8 @@ export function createRoutes(store) {
   return (
     <Router history={history}>
       <Route path="/" component={Root}>
-        <Route path="signup" component={SignupScreen} />
+        <Route path="sign-in" component={SignInScreen} />
+        <Route path="sign-up" component={SignUpScreen} />
         <Route path="*" component={NotFound} />
       </Route>
     </Router>

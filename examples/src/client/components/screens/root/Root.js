@@ -13,7 +13,10 @@ const Root = ({ children }) => (
           <Link className="Root_NavLink" to="/">Home</Link>
         </li>
         <li>
-          <Link className="Root_NavLink" to="/signup">Signup</Link>
+          <Link className="Root_NavLink" to="/sign-in">Sign in</Link>
+        </li>
+        <li>
+          <Link className="Root_NavLink" to="/sign-up">Sign-up</Link>
         </li>
       </ul>
     </nav>
