@@ -71,7 +71,7 @@ const NewsletterSignUpForm = () => (
     <SubmitButton
       className="Form_SubmitButton NewsletterSignUpForm_SubmitButton"
       href="#"
-      onClick={event => {
+      onClick={() => {
         console.log('Submit!'); // eslint-disable-line
       }}
     >Submit</SubmitButton>

@@ -8,10 +8,10 @@ import NotFound from './components/screens/notFound/NotFound';
 
 // Shim form pages
 import NewsletterSignUpForm from './components/elements/newsletterSignUpForm/NewsletterSignUpForm';
-import SignUpForm from './components/elements/signUpForm/SignUpForm';
+import EverythingForm from './components/elements/everythingForm/EverythingForm';
 
 const NewsletterSignUpScreen = () => (<NewsletterSignUpForm />);
-const SignUpScreen = () => (<SignUpForm />);
+const EverythingScreen = () => (<EverythingForm />);
 
 export function createRoutes(store) {
   const history = syncHistoryWithStore(browserHistory, store, {
@@ -22,7 +22,7 @@ export function createRoutes(store) {
     <Router history={history}>
       <Route path="/" component={Root}>
         <Route path="newsletter-sign-up" component={NewsletterSignUpScreen} />
-        <Route path="sign-up" component={SignUpScreen} />
+        <Route path="everything" component={EverythingScreen} />
         <Route path="*" component={NotFound} />
       </Route>
     </Router>

@@ -41,7 +41,7 @@ import { connectLocalState } from 'react-formic/lib/stateWrappers/localStateWrap
 const { INVALID, VALID } = validity;
 const { CHECKED } = checkboxStates;
 
-const formConfig = {
+const config = {
   stateWrapper: connectLocalState,
   fields: {
     email: {
@@ -67,7 +67,7 @@ const formConfig = {
   },
 };
 
-const SignInForm = () => (
+const SignUpForm = () => (
   <div>
     <h2>Email*</h2>
     <Input
@@ -94,10 +94,10 @@ const SignInForm = () => (
   </div>
 );
 
-export default initialize(formConfig)(SignInForm);
-
+export default initialize(config)(SignUpForm);
 ```
 
 ##Roadmap
 * Write documentation
-* Write more extensive tests
+* Add more extensive tests
+* Some more exciting things
