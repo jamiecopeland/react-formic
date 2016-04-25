@@ -54,7 +54,7 @@ export const languages = [
 
 export default {
   // stateWrapper: connectLocalState,
-  stateWrapper: connectReduxState(state => state.getIn([FORMIC_BRANCH_NAME]), 'signup', false),
+  stateWrapper: connectReduxState(state => state.getIn([FORMIC_BRANCH_NAME]), 'signUp', false),
 
   fields: {
 

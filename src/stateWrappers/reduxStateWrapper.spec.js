@@ -19,7 +19,7 @@ import { INVALID, VALID } from '../constants/validity';
 const stateEmpty = new Formic();
 const statePopulated = new Formic({
   forms: Map({
-    signup: Form({
+    signUp: Form({
       fields: Map({
         firstName: new Field({
           isRequired: true,
@@ -43,7 +43,7 @@ describe('reduxPersistenceWrapper', () => {
       const action = {
         type: DELETE_FORM,
         payload: {
-          formName: 'signup',
+          formName: 'signUp',
         },
       };
       const newState = formicReducer(statePopulated, action);
@@ -63,7 +63,7 @@ describe('reduxPersistenceWrapper', () => {
               }),
             }),
           }),
-          formName: 'signup',
+          formName: 'signUp',
         },
       };
       const newState = formicReducer(stateEmpty, action);
@@ -76,7 +76,7 @@ describe('reduxPersistenceWrapper', () => {
       const action = {
         type: SET_FORM_FIELD,
         payload: {
-          formName: 'signup',
+          formName: 'signUp',
           field: {
             value: 'Darth',
           },
@@ -88,11 +88,11 @@ describe('reduxPersistenceWrapper', () => {
       const newState = formicReducer(statePopulated, action);
       const expectedState = statePopulated
         .setIn(
-          ['forms', 'signup', 'fields', 'firstName', 'value'],
+          ['forms', 'signUp', 'fields', 'firstName', 'value'],
           action.payload.field.value
         )
         .setIn(
-          ['forms', 'signup', 'fields', 'firstName', 'isRequired'],
+          ['forms', 'signUp', 'fields', 'firstName', 'isRequired'],
           false
         );
       expect(newState).to.deep.equal(expectedState);
@@ -102,7 +102,7 @@ describe('reduxPersistenceWrapper', () => {
       const action = {
         type: SET_FORM_FIELD,
         payload: {
-          formName: 'signup',
+          formName: 'signUp',
           field: {
             validity: 'valid',
           },
@@ -113,7 +113,7 @@ describe('reduxPersistenceWrapper', () => {
 
       const newState = formicReducer(statePopulated, action);
       const expectedState = statePopulated.setIn(
-        ['forms', 'signup', 'fields', 'firstName', 'validity'],
+        ['forms', 'signUp', 'fields', 'firstName', 'validity'],
         action.payload.field.validity
       );
 
@@ -126,7 +126,7 @@ describe('reduxPersistenceWrapper', () => {
       const action = {
         type: SET_FORM_FIELDS,
         payload: {
-          formName: 'signup',
+          formName: 'signUp',
           fields: {
             firstName: {
               validity: VALID,
@@ -137,7 +137,7 @@ describe('reduxPersistenceWrapper', () => {
 
       const newState = formicReducer(statePopulated, action);
       const expectedState = statePopulated.setIn(
-        ['forms', 'signup', 'fields', 'firstName', 'validity'],
+        ['forms', 'signUp', 'fields', 'firstName', 'validity'],
         action.payload.fields.firstName.validity
       );
       expect(newState).to.deep.equal(expectedState);
@@ -147,7 +147,7 @@ describe('reduxPersistenceWrapper', () => {
       const action = {
         type: SET_FORM_FIELDS,
         payload: {
-          formName: 'signup',
+          formName: 'signUp',
           fields: {
             firstName: {
               value: 'Darth',
@@ -158,7 +158,7 @@ describe('reduxPersistenceWrapper', () => {
 
       const newState = formicReducer(statePopulated, action);
       const expectedState = statePopulated.setIn(
-        ['forms', 'signup', 'fields', 'firstName', 'value'],
+        ['forms', 'signUp', 'fields', 'firstName', 'value'],
         action.payload.fields.firstName.value
       );
       expect(newState).to.deep.equal(expectedState);
