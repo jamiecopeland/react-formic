@@ -99,7 +99,7 @@ function createValueStream(fields, changeHandlers) {
 function getFieldsWithDiff(formState1, formState2) {
   // TODO ony check value
   return formState2.fields.reduce((acc, field, fieldName) =>
-    !formState1 || field !== formState1.fields.get(fieldName)
+    !formState1 || field.value !== formState1.fields.get(fieldName).value
       ? acc.set(fieldName, field)
       : acc
   , Map({}));
