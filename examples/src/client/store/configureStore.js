@@ -17,7 +17,7 @@ export default function configureStore(initialState) {
       })
     ),
     // Prevent unecessary re-renders
-    batchedSubscribe((notify) => requestAnimationFrame(notify)),
+    batchedSubscribe(notify => requestAnimationFrame(notify)),
     // TODO Add this conditionally
     window.devToolsExtension ? window.devToolsExtension() : f => f
   )(createStore);
