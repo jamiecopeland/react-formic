@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import { Observable, Subject } from 'rx';
 
 import { INVALID } from '../constants/validity';
-import { mapObjectToObject } from '../utils/objectUtils';
+import { mapObjectToObject, forEachPropertyOfObject } from '../utils/objectUtils';
 import {
   Field,
   Form,
@@ -27,14 +27,14 @@ function createTriggerFieldMap(fields) {
     }, mapObjectToObject(fields, () => []));
 }
 
-function createFieldValidators(configFields, getFormState) {
+function createFieldValidationChangeHandlers(configFields, getFormState) {
   return mapObjectToObject(configFields, field => {
     let output;
 
     if (field.validationStream) {
       const subject = new Subject();
-      const stream = field.validationStream(subject, getFormState);
-      output = { stream, subject };
+      const validationStream = field.validationStream(subject, getFormState);
+      output = { validationStream, subject };
     } else {
       output = null;
     }
@@ -43,7 +43,19 @@ function createFieldValidators(configFields, getFormState) {
   });
 }
 
-function triggerRelatedFields(relatedFields, fieldValidators, formState, setFormField) {
+function createFieldValueChangeHandlers(fields) {
+  return mapObjectToObject(fields, field => {
+    const subject = new Subject();
+    return {
+      valueStream: field.valueStream
+        ? field.valueStream(subject)
+        : subject,
+      onChange: value => subject.onNext(value),
+    };
+  });
+}
+
+function triggerRelatedFields(relatedFields, fieldValidationChangeHandlers, formState, setFormField) {
   // Trigger other fields that need to know when this one changes
   relatedFields.forEach(fieldNameToTrigger => {
     // Set the field to dirty if it isn't already
@@ -53,19 +65,7 @@ function triggerRelatedFields(relatedFields, fieldValidators, formState, setForm
     }
 
     // Trigger the field to revalidate with its current value
-    fieldValidators[fieldNameToTrigger].subject.onNext(fieldToTrigger.value);
-  });
-}
-
-function createFieldChangeHandlers(fields) {
-  return mapObjectToObject(fields, field => {
-    const subject = new Subject();
-    return {
-      valueStream: field.valueStream
-        ? field.valueStream(subject)
-        : subject,
-      onChange: value => subject.onNext(value),
-    };
+    fieldValidationChangeHandlers[fieldNameToTrigger].subject.onNext(fieldToTrigger.value);
   });
 }
 
@@ -118,8 +118,8 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         const { fields, name } = config;
 
         this.triggerFieldMap = createTriggerFieldMap(fields);
-        this.fieldValidators = createFieldValidators(fields, this.getFormState);
-        this.fieldChangeHandlers = createFieldChangeHandlers(fields);
+        this.fieldValidationChangeHandlers = createFieldValidationChangeHandlers(fields, this.getFormState);
+        this.fieldValueChangeHandlers = createFieldValueChangeHandlers(fields);
 
         // Only create an empty formState if one doesn't already exist. State can persist after a
         // form unmounts if the reduxPersistenceWrapper is being used.
@@ -130,8 +130,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         // Create and register streams
         this.streams = [];
 
-        Object.keys(this.fieldChangeHandlers).forEach(fieldName => {
-          const { valueStream } = this.fieldChangeHandlers[fieldName];
+        forEachPropertyOfObject(this.fieldValueChangeHandlers, ({ valueStream }, fieldName) => {
           this.registerStream(
             valueStream.subscribe(value => setFormField({
               field: { value, isDirty: true },
@@ -140,10 +139,9 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
           );
         });
 
-        Object.keys(this.fieldValidators).forEach(fieldName => {
-          const { stream } = this.fieldValidators[fieldName];
+        forEachPropertyOfObject(this.fieldValidationChangeHandlers, ({ validationStream }, fieldName) => {
           this.registerStream(
-            stream.subscribe(
+            validationStream.subscribe(
               value => setFormField({
                 field: cleanValidationOutput(value),
                 fieldName,
@@ -158,10 +156,10 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         getFieldsWithValueDiff(this.props.formState, nextProps.formState)
         .filter(field => field.isDirty)
         .forEach(({ value }, fieldName) => {
-          this.fieldValidators[fieldName].subject.onNext(value);
+          this.fieldValidationChangeHandlers[fieldName].subject.onNext(value);
           triggerRelatedFields(
             this.triggerFieldMap[fieldName],
-            this.fieldValidators,
+            this.fieldValidationChangeHandlers,
             nextProps.formState,
             this.props.setFormField
           );
@@ -176,7 +174,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
 
       getFormFieldState = fieldName => this.props.formState.getIn(['fields', fieldName])
 
-      getFormFieldChangeHandler = fieldName => this.fieldChangeHandlers[fieldName].onChange
+      getFormFieldChangeHandler = fieldName => this.fieldValueChangeHandlers[fieldName].onChange
 
       getFormState = () => this.props.formState
 
