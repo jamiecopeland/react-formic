@@ -38,9 +38,6 @@ import {
 } from 'react-formic';
 import { connectLocalState } from 'react-formic/lib/stateWrappers/localStateWrapper';
 
-import '../../../styles/form.css';
-import './SignInForm.css';
-
 const { INVALID, VALID } = validity;
 const { CHECKED } = checkboxStates;
 
@@ -59,7 +56,7 @@ const formConfig = {
           validityMessage: 'Must be a valid email',
         })),
     },
-    recieveDarkSideEmail: {
+    receiveDarkSideEmail: {
       isRequired: true,
       validationStream: valueStream => valueStream
         .map(value => ({
@@ -71,35 +68,26 @@ const formConfig = {
 };
 
 const SignInForm = () => (
-  <div className="SignInForm">
+  <div>
+    <h2>Email*</h2>
+    <Input
+      fieldName="email"
+      type="text"
+    />
+    <ErrorMessage fieldName="email" />
 
-    <div className="Form_Field">
-      <div className="Form_Label">Email*</div>
-      <Input
-        className="Form_TextInput"
-        fieldName="email"
-        type="text"
-      />
-      <ErrorMessage className="Form_ErrorRight" fieldName="email" />
-    </div>
+		<h2>Confirmation*</h2>
+    <Input
+      fieldName="receiveDarkSideEmail"
+      id="receiveDarkSideEmail"
+      type="checkbox"
+    />
+    I would like to receive the Dark Side of the Force newsletter
+    <ErrorMessage fieldName="receiveDarkSideEmail" />
 
-    <div className="Form_Field">
-      <div className="Form_Label">Confirmation*</div>
-      <Input
-        className="Form_Checkbox"
-        fieldName="recieveDarkSideEmail"
-        id="recieveDarkSideEmail"
-        type="checkbox"
-      />
-      <label className="Form_CheckboxLabel" htmlFor="recieveDarkSideEmail">
-        I would like to receive Dark Side of the Force newsletter
-      </label>
-      <ErrorMessage className="Form_ErrorRight" fieldName="recieveDarkSideEmail" />
-    </div>
     <SubmitButton
       className="Form_SubmitButton"
       onClick={event => {
-        event.preventDefault();
         console.log('Submit!');
       }}
     >Submit</SubmitButton>
