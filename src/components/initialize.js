@@ -29,18 +29,29 @@ function createTriggerFieldMap(fields) {
 
 function createFieldValidationChangeHandlers(configFields, getFormState) {
   return mapObjectToObject(configFields, field => {
-    let output;
+    // let output;
 
-    if (field.validationStream) {
-      const subject = new Subject();
-      const validationStream = field.validationStream(subject, getFormState);
-      output = {
-        validationStream,
-        onChange: value => subject.onNext(value),
-      };
-    } else {
-      output = null;
-    }
+    // if (field.validationStream) {
+    //   const subject = new Subject();
+    //   const validationStream = field.validationStream(subject, getFormState);
+    //   output = {
+    //     validationStream,
+    //     onChange: value => subject.onNext(value),
+    //   };
+    // } else {
+    //   output = null;
+    // }
+
+
+    const subject = new Subject();
+    // const validationStream = field.validationStream(subject, getFormState);
+    const output = {
+      validationStream: field.validationStream
+        ? field.validationStream(subject, getFormState)
+        : null,
+      onChange: value => subject.onNext(value),
+    };
+
 
     return output;
   });
@@ -136,6 +147,14 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         // Create and register streams
         this.streams = [];
 
+        // Set isRequired values on fields
+        forEachPropertyOfObject(config.fields, ({ isRequired }, fieldName) => {
+          setFormField({
+            field: { isRequired },
+            fieldName,
+          });
+        });
+
         forEachPropertyOfObject(this.fieldValueChangeHandlers, ({ valueStream }, fieldName) => {
           this.registerStream(
             valueStream.subscribe(value => setFormField({
@@ -145,16 +164,21 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
           );
         });
 
-        forEachPropertyOfObject(this.fieldValidationChangeHandlers,({ validationStream }, fieldName) => { // eslint-disable-line
-          this.registerStream(
-            validationStream.subscribe(
-              value => setFormField({
-                field: cleanValidationOutput(value),
-                fieldName,
-              })
-            )
-          );
+        forEachPropertyOfObject(this.fieldValidationChangeHandlers, (validationChangeHandler, fieldName) => { // eslint-disable-line
+          // console.log('validationChangeHandler: ', validationChangeHandler);
+          if (validationChangeHandler.validationStream) {
+            this.registerStream(
+              validationChangeHandler.validationStream.subscribe(
+                value => setFormField({
+                  field: cleanValidationOutput(value),
+                  fieldName,
+                })
+              )
+            );
+          }
         });
+
+
       }
 
       componentWillReceiveProps(nextProps) {

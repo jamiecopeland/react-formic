@@ -1,0 +1,11 @@
+@import '../../../styles/variables.css';
+
+.SignInForm {
+  padding: 1rem 1rem 2rem 1rem;
+
+  &-Title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+}

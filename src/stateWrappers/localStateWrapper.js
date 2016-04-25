@@ -12,6 +12,7 @@ export const connectLocalState = FormComponent => {
     initializeForm = ({ form }) => this.setState({ form }) // eslint-disable-line
 
     setFormField = ({ field, fieldName, shouldReplace }) => {
+      console.log('setFormField: ', fieldName, field);
       this.actionQueue.push({ field, fieldName, shouldReplace });
       this.invalidateState();
     }
