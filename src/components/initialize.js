@@ -58,10 +58,12 @@ function triggerRelatedFields(relatedFields, fieldValidators, formState, setForm
 }
 
 function createFieldChangeHandlers(fields) {
-  return mapObjectToObject(fields, () => {
+  return mapObjectToObject(fields, field => {
     const subject = new Subject();
     return {
-      valueStream: subject,
+      valueStream: field.valueStream
+        ? field.valueStream(subject)
+        : subject,
       onChange: value => subject.onNext(value),
     };
   });
@@ -73,14 +75,8 @@ function createEmptyForm(fields) {
 
 function createValueStream(fields, changeHandlers) {
   const formValueStream = Object.keys(fields).reduce((acc, fieldName) => {
-    const { valueStream: modifiedStream } = fields[fieldName];
-    const { valueStream } = changeHandlers[fieldName];
     return acc.merge(
-      (
-        modifiedStream
-        ? modifiedStream(valueStream)
-        : valueStream
-      )
+      changeHandlers[fieldName].valueStream
       .map(value => ({ [fieldName]: { value, isDirty: true } })));
   }, Observable.create(() => {}));
   return formValueStream
