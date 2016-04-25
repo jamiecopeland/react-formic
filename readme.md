@@ -9,7 +9,7 @@ As soon as an application moves beyond simple asynchronous flows, callbacks and 
 
 [RxJS](https://github.com/Reactive-Extensions/RxJS) provides a rich and mature API for dealing with asynchronicity in JavaScript. For example, the two problems mentioned above can be solved in three extremely clear and declarative lines:
 
-```
+```js
 userNameInputValueStream
 .debounce(300)
 .flatMapLatest(value => isUnique(value).map(response => response.body.userNameExists))
@@ -25,7 +25,7 @@ If you're unfamiliar with RxJS and functional reactive programming, make sure to
 
 More documentation is on the way, but for now take a look at the simple implementation below or for a more involved example, clone the project and run the examples application.
 
-```
+```js
 import React from 'react';
 import { isEmail } from 'validator';
 import {
