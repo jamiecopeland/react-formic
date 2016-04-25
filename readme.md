@@ -98,12 +98,9 @@ const SignInForm = () => (
     </div>
     <SubmitButton
       className="Form_SubmitButton"
-      style={{ display: 'inline-block' }}
-      tag="a"
-      href="#"
       onClick={event => {
         event.preventDefault();
-        console.log('Submit!'); // eslint-disable-line
+        console.log('Submit!');
       }}
     >Submit</SubmitButton>
   </div>

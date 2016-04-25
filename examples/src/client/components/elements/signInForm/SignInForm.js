@@ -69,8 +69,7 @@ const SignInForm = () => (
       <ErrorMessage className="Form_ErrorRight" fieldName="recieveDarkSideEmail" />
     </div>
     <SubmitButton
-      className="Form_SubmitButton"
-      style={{ display: 'inline-block' }}
+      className="Form_SubmitButton SignInForm_SubmitButton"
       href="#"
       onClick={event => {
         event.preventDefault();
