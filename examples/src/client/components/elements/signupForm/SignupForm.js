@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   initialize,
-  ErrorMessage,
   Input,
   Select,
   SubmitButton,
@@ -54,7 +53,6 @@ const SignupForm = ({ form }) => {
             type="text"
           />
           <FieldErrorRight fieldName="email" />
-
           <div className="Form_FieldExplanation">
             Debounced validation
           </div>

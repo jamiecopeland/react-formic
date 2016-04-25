@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { INVALID } from '../../constants/validity';
+import { fieldIsInvalid } from '../../utils/validationUtils';
 
 // The default implementation for mapping field values props.
 export const defaultMapFieldValuesToProps = (field) => ({ field });
@@ -9,11 +9,11 @@ const connectError = (mapFieldValuesToProps = defaultMapFieldValuesToProps) => W
   const ConnectErrorWrapper = (props, { getFormFieldState }) => {
     const { fieldName } = props;
 
-    const fieldState = getFormFieldState(fieldName);
+    const field = getFormFieldState(fieldName);
 
     return (
-      fieldState.validity === INVALID
-        ? <WrappedComponent {...props} {...mapFieldValuesToProps(fieldState)} />
+      fieldIsInvalid(field)
+        ? <WrappedComponent {...props} {...mapFieldValuesToProps(field)} />
         : null
     );
   };

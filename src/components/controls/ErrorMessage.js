@@ -3,22 +3,20 @@ import React from 'react';
 import connectField from '../connectors/connectField';
 import { fieldIsInvalid } from '../../utils/validationUtils';
 
-const ErrorMessage = ({ field, component: WrappedComponent }) => {
-  if (!field) {
-    // TODO Add nicer message about where to add field
-    console.warn(`Formic - ErrorMessage component has no corresponding field: ${fieldName}`); // eslint-disable-line
-  }
-
-  return (
-    field && fieldIsInvalid(field) && field.validityMessage && WrappedComponent
-    ? <WrappedComponent message={field.validityMessage} />
-    : null
-  );
+const ErrorMessage = props => {
+  const { field, tag: Tag } = props;
+  return fieldIsInvalid(field)
+  ? <Tag {...props}>{field.validityMessage}</Tag>
+  : null;
 };
 
 ErrorMessage.propTypes = {
   field: React.PropTypes.object.isRequired,
-  component: React.PropTypes.func.isRequired,
+  tag: React.PropTypes.string.isRequired,
+};
+
+ErrorMessage.defaultProps = {
+  tag: 'span',
 };
 
 export default connectField()(ErrorMessage);
