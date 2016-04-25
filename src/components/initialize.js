@@ -90,7 +90,7 @@ function createValueStream(fields, changeHandlers) {
         ? modifiedStream(valueStream)
         : valueStream
       )
-      .map(value => ({ [fieldName]: { value } })));
+      .map(value => ({ [fieldName]: { value, isDirty: true } })));
   }, Observable.create(() => {}));
   return formValueStream
     .scan((acc, stream) => ({ ...acc, ...stream }));
