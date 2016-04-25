@@ -19,10 +19,9 @@ const SubmitButton = (props) => {
     }),
     disabled: !isValid,
     onClick: (event) => {
+      event.preventDefault();
       if (isValid) {
         onClick(event);
-      } else {
-        event.preventDefault();
       }
     },
   };
