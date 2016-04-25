@@ -152,12 +152,13 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         }
 
         createValueStream(fields, this.fieldChangeHandlers)
-        .subscribe(newFields => this.props.setFormFields({ fields: newFields }));
+          .subscribe(newFields => this.props.setFormFields({ fields: newFields }));
       }
 
       componentWillReceiveProps(nextProps) {
         // TODO Move this out into utility function
         getFieldsWithDiff(this.props.formState, nextProps.formState)
+        .filter(field => field.isDirty)
         .forEach(({ value }, fieldName) => {
           this.fieldValidators[fieldName].subject.onNext(value);
           triggerRelatedFields(
