@@ -33,15 +33,7 @@ function createFieldValidators(configFields, getFormState, setFormField) {
 
     if (field.validationStream) {
       const subject = new Subject();
-      const stream = field.validationStream(subject, getFormState).subscribe(
-        value => {
-          // console.log('validation', value);
-          setFormField({
-            field: cleanValidationOutput(value),
-            fieldName,
-          });
-        }
-      );
+      const stream = field.validationStream(subject, getFormState);
       output = { stream, subject };
     } else {
       output = null;
@@ -54,7 +46,6 @@ function createFieldValidators(configFields, getFormState, setFormField) {
 function triggerRelatedFields(relatedFields, fieldValidators, formState, setFormField) {
   // Trigger other fields that need to know when this one changes
   relatedFields.forEach(fieldNameToTrigger => {
-    console.log('fieldNameToTrigger: ', fieldNameToTrigger);
     // Set the field to dirty if it isn't already
     const fieldToTrigger = formState.getIn(['fields', fieldNameToTrigger]);
     if (!fieldNameToTrigger.isDirty) {
@@ -151,8 +142,25 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
           initializeForm({ form: createEmptyForm(fields), formName: name });
         }
 
-        createValueStream(fields, this.fieldChangeHandlers)
-          .subscribe(newFields => this.props.setFormFields({ fields: newFields }));
+        // Create and register streams
+        this.streams = [];
+
+        this.registerStream(
+          createValueStream(fields, this.fieldChangeHandlers)
+          .subscribe(newFields => this.props.setFormFields({ fields: newFields }))
+        );
+
+        Object.keys(this.fieldValidators).forEach(fieldName => {
+          const { stream } = this.fieldValidators[fieldName];
+          this.registerStream(
+            stream.subscribe(
+              value => setFormField({
+                field: cleanValidationOutput(value),
+                fieldName,
+              })
+            )
+          );
+        });
       }
 
       componentWillReceiveProps(nextProps) {
@@ -181,6 +189,14 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
       getFormFieldChangeHandler = fieldName => this.fieldChangeHandlers[fieldName].onChange
 
       getFormState = () => this.props.formState
+
+      registerStream(stream) {
+        this.streams.push(stream);
+      }
+
+      disposeStreams() {
+        this.streams.forEach(stream => stream.dispose());
+      }
 
       render() {
         const { formState } = this.props;
