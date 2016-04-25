@@ -3,8 +3,8 @@ import React from 'react';
 // The default implementation for mapping field values props.
 export const defaultMapFieldValuesToProps = (field, onChange) => ({ field, onChange });
 
-const connectControl = (mapFieldValuesToProps = defaultMapFieldValuesToProps) => WrappedComponent => {
-  const ConnectControlWrapper = (props, { getFormFieldState, getFormFieldChangeHandler, store }) => {
+const connectField = (mapFieldValuesToProps = defaultMapFieldValuesToProps) => WrappedComponent => {
+  const ConnectFieldWrapper = (props, { getFormFieldState, getFormFieldChangeHandler }) => {
     const { fieldName } = props;
 
     const fieldState = getFormFieldState(fieldName);
@@ -27,18 +27,17 @@ const connectControl = (mapFieldValuesToProps = defaultMapFieldValuesToProps) =>
     );
   };
 
-  ConnectControlWrapper.contextTypes = {
+  ConnectFieldWrapper.contextTypes = {
     getFormFieldState: React.PropTypes.func.isRequired,
     getFormFieldChangeHandler: React.PropTypes.func.isRequired,
 
   };
 
-  ConnectControlWrapper.propTypes = {
+  ConnectFieldWrapper.propTypes = {
     fieldName: React.PropTypes.string.isRequired,
-    store: React.PropTypes.object,
   };
 
-  return ConnectControlWrapper;
+  return ConnectFieldWrapper;
 };
 
-export default connectControl;
+export default connectField;

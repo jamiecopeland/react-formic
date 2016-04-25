@@ -7,6 +7,7 @@ import {
   SubmitButton,
   TextArea,
 } from 'react-formic';
+import connectError from 'react-formic/lib/components/connectors/connectError';
 
 import signupFormConfig, { genders, languages } from './signupFormConfig';
 
@@ -16,23 +17,15 @@ import '../../../styles/form.css';
 // --------------------------------------------------
 // Error labels
 
-const errorPropTypes = {
-  message: React.PropTypes.string,
+const FieldErrorRightContent = ({ field: { validityMessage } }) => (
+  <span className="Form_ErrorRight">{validityMessage}</span>
+);
+
+FieldErrorRightContent.propTypes = {
+  field: React.PropTypes.object,
 };
 
-const FieldErrorRightContent = ({ message }) => (<span className="Form_ErrorRight">{message}</span>);
-FieldErrorRightContent.propTypes = errorPropTypes;
-
-const FieldErrorBottomContent = ({ message }) => (
-  <div className="Form_ErrorBottom">
-    <div className="Form_ErrorBottom_Message">{message}</div>
-  </div>
-);
-FieldErrorBottomContent.propTypes = errorPropTypes;
-
-const FieldErrorRight = props => (<ErrorMessage {...props} component={FieldErrorRightContent} />);
-// const FieldErrorBottom = props =>
-//  (<ErrorMessage {...props} component={FieldErrorBottomContent} />);
+const FieldErrorRight = connectError()(FieldErrorRightContent);
 
 // --------------------------------------------------
 // Form
@@ -61,6 +54,7 @@ const SignupForm = ({ form }) => {
             type="text"
           />
           <FieldErrorRight fieldName="email" />
+
           <div className="Form_FieldExplanation">
             Debounced validation
           </div>
