@@ -10,7 +10,7 @@ import connectError from 'react-formic/lib/components/connectors/connectError';
 
 import signUpFormConfig, { genders, languages } from './signUpFormConfig';
 
-import './SignupForm.css';
+import './SignUpForm.css';
 import '../../../styles/form.css';
 
 // --------------------------------------------------
@@ -39,12 +39,12 @@ const languagesWithCTA = [
 
 const TWEET_LENGTH = 140;
 
-const SignupForm = ({ form }) => {
+const SignUpForm = ({ form }) => {
   const tweetValue = form.getIn(['fields', 'tweet', 'value']);
   const tweetRemainingChars = tweetValue ? TWEET_LENGTH - tweetValue.length : TWEET_LENGTH;
   return (
-    <div className="SignupForm">
-      <h1 className="SignupForm-Title">SignupForm</h1>
+    <div className="SignUpForm">
+      <h1 className="SignUpForm-Title">SignUpForm</h1>
         <div className="Form_Field">
           <div className="Form_Label">Email*</div>
           <Input
@@ -230,8 +230,8 @@ const SignupForm = ({ form }) => {
   );
 };
 
-SignupForm.propTypes = {
+SignUpForm.propTypes = {
   form: React.PropTypes.object,
 };
 
-export default initialize(signUpFormConfig)(SignupForm);
+export default initialize(signUpFormConfig)(SignUpForm);

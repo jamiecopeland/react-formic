@@ -44,7 +44,7 @@ const formConfig = {
 
 const SignInForm = () => (
   <div className="SignInForm">
-
+    <h1 className="SignInForm-Title">Join the dark side!</h1>
     <div className="Form_Field">
       <div className="Form_Label">Email*</div>
       <Input
@@ -64,7 +64,7 @@ const SignInForm = () => (
         type="checkbox"
       />
       <label className="Form_CheckboxLabel" htmlFor="recieveDarkSideEmail">
-        I would like to receive Dark Side of the Force newsletter
+        I would like to receive the Dark Side of the Force newsletter
       </label>
       <ErrorMessage className="Form_ErrorRight" fieldName="recieveDarkSideEmail" />
     </div>
