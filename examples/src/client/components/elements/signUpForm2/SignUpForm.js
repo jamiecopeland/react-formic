@@ -8,7 +8,7 @@ import {
 } from 'react-formic';
 import connectError from 'react-formic/lib/components/connectors/connectError';
 
-import signupFormConfig, { genders, languages } from './signupFormConfig';
+import signUpFormConfig, { genders, languages } from './signUpFormConfig';
 
 import './SignupForm.css';
 import '../../../styles/form.css';
@@ -234,4 +234,4 @@ SignupForm.propTypes = {
   form: React.PropTypes.object,
 };
 
-export default initialize(signupFormConfig)(SignupForm);
+export default initialize(signUpFormConfig)(SignupForm);

@@ -8,7 +8,7 @@ import NotFound from './components/screens/notFound/NotFound';
 
 // Shim form pages
 import SignInForm from './components/elements/signInForm/SignInForm';
-import SignUpForm from './components/elements/signUpForm/SignUpForm';
+import SignUpForm from './components/elements/signUpForm2/SignUpForm';
 
 const SignInScreen = () => (<SignInForm />);
 const SignUpScreen = () => (<SignUpForm />);
