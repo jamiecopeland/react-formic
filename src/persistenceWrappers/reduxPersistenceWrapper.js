@@ -76,9 +76,6 @@ export function connectRedux(formicBranchAccessor, formName, clearOnUnmount) {
       initializeForm: ({ form }) => dispatch(initializeForm({ form, formName })),
       setFormField: ({ field, fieldName }) =>
         dispatch(setFormField({ field, fieldName, formName })),
-      setFormFields: ({ fields }) => {
-        dispatch(setFormFields({ fields, formName }));
-      },
       onUnmount: () =>
         clearOnUnmount
         ? dispatch(deleteForm({ formName }))

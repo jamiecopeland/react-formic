@@ -34,7 +34,10 @@ function createFieldValidationChangeHandlers(configFields, getFormState) {
     if (field.validationStream) {
       const subject = new Subject();
       const validationStream = field.validationStream(subject, getFormState);
-      output = { validationStream, subject };
+      output = {
+        validationStream,
+        onChange: value => subject.onNext(value),
+      };
     } else {
       output = null;
     }
@@ -55,7 +58,9 @@ function createFieldValueChangeHandlers(fields) {
   });
 }
 
-function triggerRelatedFields(relatedFields, fieldValidationChangeHandlers, formState, setFormField) {
+function triggerRelatedFields(
+  relatedFields, fieldValidationChangeHandlers, formState, setFormField
+) {
   // Trigger other fields that need to know when this one changes
   relatedFields.forEach(fieldNameToTrigger => {
     // Set the field to dirty if it isn't already
@@ -65,7 +70,7 @@ function triggerRelatedFields(relatedFields, fieldValidationChangeHandlers, form
     }
 
     // Trigger the field to revalidate with its current value
-    fieldValidationChangeHandlers[fieldNameToTrigger].subject.onNext(fieldToTrigger.value);
+    fieldValidationChangeHandlers[fieldNameToTrigger].onChange(fieldToTrigger.value);
   });
 }
 
@@ -96,7 +101,6 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         initializeForm: React.PropTypes.func.isRequired,
         onUnmount: React.PropTypes.func,
         setFormField: React.PropTypes.func.isRequired,
-        setFormFields: React.PropTypes.func.isRequired,
       };
 
       static childContextTypes = {
@@ -117,9 +121,11 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         const { formState, setFormField, initializeForm } = this.props;
         const { fields, name } = config;
 
-        this.triggerFieldMap = createTriggerFieldMap(fields);
-        this.fieldValidationChangeHandlers = createFieldValidationChangeHandlers(fields, this.getFormState);
         this.fieldValueChangeHandlers = createFieldValueChangeHandlers(fields);
+        this.fieldValidationChangeHandlers = createFieldValidationChangeHandlers(
+          fields, this.getFormState
+        );
+        this.triggerFieldMap = createTriggerFieldMap(fields);
 
         // Only create an empty formState if one doesn't already exist. State can persist after a
         // form unmounts if the reduxPersistenceWrapper is being used.
@@ -139,7 +145,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
           );
         });
 
-        forEachPropertyOfObject(this.fieldValidationChangeHandlers, ({ validationStream }, fieldName) => {
+        forEachPropertyOfObject(this.fieldValidationChangeHandlers,({ validationStream }, fieldName) => { // eslint-disable-line
           this.registerStream(
             validationStream.subscribe(
               value => setFormField({
@@ -156,7 +162,8 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         getFieldsWithValueDiff(this.props.formState, nextProps.formState)
         .filter(field => field.isDirty)
         .forEach(({ value }, fieldName) => {
-          this.fieldValidationChangeHandlers[fieldName].subject.onNext(value);
+          this.fieldValidationChangeHandlers[fieldName].onChange(value);
+
           triggerRelatedFields(
             this.triggerFieldMap[fieldName],
             this.fieldValidationChangeHandlers,
@@ -170,6 +177,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         if (this.props.onUnmount) {
           this.props.onUnmount();
         }
+        this.disposeStreams();
       }
 
       getFormFieldState = fieldName => this.props.formState.getIn(['fields', fieldName])
