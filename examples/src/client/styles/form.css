@@ -79,6 +79,12 @@ $arrowHeight: 1rem;
   margin-bottom: 0.5rem;
 }
 
+.FormCheckboxLabel {
+  display: inline-block;
+  line-height: $fieldHeight;
+  margin-right: 0.2rem;
+}
+
 .FormSelect {
   border-radius: 0;
   font-size: 1rem;

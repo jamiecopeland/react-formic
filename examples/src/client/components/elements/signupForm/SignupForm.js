@@ -178,7 +178,7 @@ const SignupForm = ({ form }) => {
           id="agreeTermsAndConditions"
           type="checkbox"
         />
-        <label htmlFor="agreeTermsAndConditions">I agree to something</label>
+        <label className="FormCheckboxLabel" htmlFor="agreeTermsAndConditions">I agree to something</label>
         <FieldErrorRight fieldName="agreeTermsAndConditions" />
         <div className="FormExplanation">Checkbox with conditional validation</div>
       </div>
