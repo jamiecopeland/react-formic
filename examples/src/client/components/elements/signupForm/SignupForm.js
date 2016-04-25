@@ -48,6 +48,8 @@ const languagesWithCTA = [
 const TWEET_LENGTH = 140;
 
 const SignupForm = ({ form }) => {
+  const tweetValue = form.getIn(['fields', 'tweet', 'value']);
+  const tweetRemainingChars = tweetValue ? TWEET_LENGTH - tweetValue.length : TWEET_LENGTH;
   return (
   <div className="SignupForm">
     <h1 className="SignupForm-Title">SignupForm</h1>
@@ -59,7 +61,9 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="email" />
-        <div className="FormExplanation">Debounced validation</div>
+        <div className="FormExplanation">
+          Debounced validation
+        </div>
       </div>
 
       <div className="FormField">
@@ -70,10 +74,10 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="userName" />
-        <div className="FormExplanation">Remote api check for uniquness</div>
+        <div className="FormExplanation">
+          Remote api check for uniquness
+        </div>
       </div>
-
-      {/*
 
       <div className="FormField">
         <div className="FormLabel">Credit Card Number*</div>
@@ -83,7 +87,9 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="creditCardLongNumber" />
-        <div className="FormExplanation">Value restriction and transformation</div>
+        <div className="FormExplanation">
+          Value restriction and transformation
+        </div>
       </div>
 
       <div className="FormField">
@@ -94,7 +100,9 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="billingAddressLine1" />
-        <div className="FormExplanation">Validity relating to prescence of other address fields</div>
+        <div className="FormExplanation">
+          Validity relating to prescence of other address fields
+        </div>
       </div>
 
       <div className="FormField">
@@ -105,7 +113,9 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="billingAddressLine2" />
-        <div className="FormExplanation">Validity relating to prescence of other address fields</div>
+        <div className="FormExplanation">
+          Validity relating to prescence of other address fields
+        </div>
       </div>
 
       <div className="FormField">
@@ -116,7 +126,9 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="billingAddressPostcode" />
-        <div className="FormExplanation">Validity relating to prescence of other address fields</div>
+        <div className="FormExplanation">
+          Validity relating to prescence of other address fields
+        </div>
       </div>
 
       <div className="FormField">
@@ -127,7 +139,9 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="favouriteColor" />
-        <div className="FormExplanation">Validates when populated but not required</div>
+        <div className="FormExplanation">
+          Validates when populated but not required
+        </div>
       </div>
 
       <div className="FormField">
@@ -138,7 +152,9 @@ const SignupForm = ({ form }) => {
           type="text"
         />
         <FieldErrorRight fieldName="tweet" />
-        <div className="FormExplanation">TextArea with label containing manipulated value</div>
+        <div className="FormExplanation">
+          TextArea with label containing manipulated value
+        </div>
       </div>
 
       <div className="FormField">
@@ -167,7 +183,9 @@ const SignupForm = ({ form }) => {
           <label htmlFor="genderMale">Male</label>
         </div>
         <FieldErrorRight fieldName="gender" />
-        <div className="FormExplanation">Radio buttons</div>
+        <div className="FormExplanation">
+          Radio buttons
+        </div>
       </div>
 
       <div className="FormField">
@@ -180,7 +198,9 @@ const SignupForm = ({ form }) => {
         />
         <label className="FormCheckboxLabel" htmlFor="agreeTermsAndConditions">I agree to something</label>
         <FieldErrorRight fieldName="agreeTermsAndConditions" />
-        <div className="FormExplanation">Checkbox with conditional validation</div>
+        <div className="FormExplanation">
+          Checkbox with conditional validation
+        </div>
       </div>
 
       <div className="FormField">
@@ -192,7 +212,9 @@ const SignupForm = ({ form }) => {
           }
         </Select>
         <FieldErrorRight fieldName="language" />
-        <div className="FormExplanation">Select with enforced selection</div>
+        <div className="FormExplanation">
+          Select with enforced selection
+        </div>
       </div>
 
       <div>
@@ -210,7 +232,7 @@ const SignupForm = ({ form }) => {
           Submit button becomes clickable when the whole form is valid
         </div>
       </div>
-
+      {/*
       */}
       {/*
         <Visualizer style={{
