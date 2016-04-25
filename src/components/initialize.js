@@ -31,9 +31,9 @@ function createFieldValidators(configFields, getFormState, setFormField) {
   return mapObjectToObject(configFields, (field, fieldName) => {
     let output;
 
-    if (field.validate) {
+    if (field.validationStream) {
       const subject = new Subject();
-      const stream = field.validate(subject, getFormState).subscribe(
+      const stream = field.validationStream(subject, getFormState).subscribe(
         value => {
           // console.log('validation', value);
           setFormField({
@@ -51,11 +51,12 @@ function createFieldValidators(configFields, getFormState, setFormField) {
   });
 }
 
-function triggerRelatedFields(relatedFields, fieldValidators, getFormState, setFormField) {
+function triggerRelatedFields(relatedFields, fieldValidators, formState, setFormField) {
   // Trigger other fields that need to know when this one changes
   relatedFields.forEach(fieldNameToTrigger => {
+    console.log('fieldNameToTrigger: ', fieldNameToTrigger);
     // Set the field to dirty if it isn't already
-    const fieldToTrigger = getFormState().getIn(['fields', fieldNameToTrigger]);
+    const fieldToTrigger = formState.getIn(['fields', fieldNameToTrigger]);
     if (!fieldNameToTrigger.isDirty) {
       setFormField({ fieldName: fieldNameToTrigger, field: { isDirty: true } });
     }
@@ -76,16 +77,7 @@ function createFieldChangeHandlers(fields) {
 }
 
 function createEmptyForm(fields) {
-  return new Form({
-    fields: Map(mapObjectToObject(fields, ({ initialValues }) => Field(
-      initialValues
-      ? {
-        value: initialValues.value,
-        isRequired: initialValues.isRequired,
-      }
-      : {}
-    ))),
-  });
+  return new Form({ fields: Map(mapObjectToObject(fields, () => Field())) });
 }
 
 function createValueStream(fields, changeHandlers) {
@@ -105,6 +97,7 @@ function createValueStream(fields, changeHandlers) {
 }
 
 function getFieldsWithDiff(formState1, formState2) {
+  // TODO ony check value
   return formState2.fields.reduce((acc, field, fieldName) =>
     !formState1 || field !== formState1.fields.get(fieldName)
       ? acc.set(fieldName, field)
@@ -163,11 +156,16 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
       }
 
       componentWillReceiveProps(nextProps) {
+        // TODO Move this out into utility function
         getFieldsWithDiff(this.props.formState, nextProps.formState)
-        .forEach((field, fieldName) => {
-          this.fieldValidators[fieldName].subject.onNext(field.value);
-          // console.log('triggering stream: ', fieldName, field.value);
-          // TODO trigger related fields
+        .forEach(({ value }, fieldName) => {
+          this.fieldValidators[fieldName].subject.onNext(value);
+          triggerRelatedFields(
+            this.triggerFieldMap[fieldName],
+            this.fieldValidators,
+            nextProps.formState,
+            this.props.setFormField
+          );
         });
       }
 
