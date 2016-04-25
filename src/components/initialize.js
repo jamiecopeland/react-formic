@@ -27,8 +27,8 @@ function createTriggerFieldMap(fields) {
     }, mapObjectToObject(fields, () => []));
 }
 
-function createFieldValidators(configFields, getFormState, setFormField) {
-  return mapObjectToObject(configFields, (field, fieldName) => {
+function createFieldValidators(configFields, getFormState) {
+  return mapObjectToObject(configFields, field => {
     let output;
 
     if (field.validationStream) {
@@ -73,18 +73,7 @@ function createEmptyForm(fields) {
   return new Form({ fields: Map(mapObjectToObject(fields, () => Field())) });
 }
 
-function createValueStream(fields, changeHandlers) {
-  const formValueStream = Object.keys(fields).reduce((acc, fieldName) => {
-    return acc.merge(
-      changeHandlers[fieldName].valueStream
-      .map(value => ({ [fieldName]: { value, isDirty: true } })));
-  }, Observable.create(() => {}));
-  return formValueStream
-    .scan((acc, stream) => ({ ...acc, ...stream }));
-}
-
-function getFieldsWithDiff(formState1, formState2) {
-  // TODO ony check value
+function getFieldsWithValueDiff(formState1, formState2) {
   return formState2.fields.reduce((acc, field, fieldName) =>
     !formState1 || field.value !== formState1.fields.get(fieldName).value
       ? acc.set(fieldName, field)
@@ -129,7 +118,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         const { fields, name } = config;
 
         this.triggerFieldMap = createTriggerFieldMap(fields);
-        this.fieldValidators = createFieldValidators(fields, this.getFormState, setFormField);
+        this.fieldValidators = createFieldValidators(fields, this.getFormState);
         this.fieldChangeHandlers = createFieldChangeHandlers(fields);
 
         // Only create an empty formState if one doesn't already exist. State can persist after a
@@ -141,10 +130,15 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         // Create and register streams
         this.streams = [];
 
-        this.registerStream(
-          createValueStream(fields, this.fieldChangeHandlers)
-          .subscribe(newFields => this.props.setFormFields({ fields: newFields }))
-        );
+        Object.keys(this.fieldChangeHandlers).forEach(fieldName => {
+          const { valueStream } = this.fieldChangeHandlers[fieldName];
+          this.registerStream(
+            valueStream.subscribe(value => setFormField({
+              field: { value, isDirty: true },
+              fieldName,
+            }))
+          );
+        });
 
         Object.keys(this.fieldValidators).forEach(fieldName => {
           const { stream } = this.fieldValidators[fieldName];
@@ -161,7 +155,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
 
       componentWillReceiveProps(nextProps) {
         // TODO Move this out into utility function
-        getFieldsWithDiff(this.props.formState, nextProps.formState)
+        getFieldsWithValueDiff(this.props.formState, nextProps.formState)
         .filter(field => field.isDirty)
         .forEach(({ value }, fieldName) => {
           this.fieldValidators[fieldName].subject.onNext(value);
