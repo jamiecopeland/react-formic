@@ -1,10 +1,10 @@
 @import './variables.css';
 
-.FormField {
+.Form_Field {
   margin: 0 0 1.5rem;
 }
 
-.FormLabel {
+.Form_Label {
   font-weight: bold;
   margin-bottom: 0.5em;
   height: 1rem;
@@ -23,7 +23,7 @@ $arrowHeight: 1rem;
   transition: all 0.2s ease-in-out;
 }
 
-.FormExplanation {
+.Form_FieldExplanation {
   color: #999;
   font-size: 0.75rem;
   margin-top: 0.45rem;
@@ -38,7 +38,7 @@ $arrowHeight: 1rem;
   */
 }
 
-.FormTextInput {
+.Form_TextInput {
   @extend FormTextBase;
 
   width: 300px;
@@ -54,7 +54,7 @@ $arrowHeight: 1rem;
   }
 }
 
-.FormTextArea {
+.Form_TextArea {
   @extend FormTextBase;
 
   width: 300px;
@@ -69,23 +69,23 @@ $arrowHeight: 1rem;
   }
 }
 
-.FormRadioButton {
+.Form_RadioButton {
   margin-right: 0.7rem;
   margin-bottom: 0.5rem;
 }
 
-.FormCheckbox {
+.Form_Checkbox {
   margin-right: 0.7rem;
   margin-bottom: 0.5rem;
 }
 
-.FormCheckboxLabel {
+.Form_CheckboxLabel {
   display: inline-block;
   line-height: $fieldHeight;
   margin-right: 0.2rem;
 }
 
-.FormSelect {
+.Form_Select {
   border-radius: 0;
   font-size: 1rem;
   line-height: 2rem;
@@ -94,7 +94,7 @@ $arrowHeight: 1rem;
   border: solid 1px #CFCFCF;
 }
 
-.FormErrorRight {
+.Form_ErrorRight {
   position: relative;
   color: white;
   font-size: 1rem;
@@ -129,7 +129,7 @@ $arrowHeight: 1rem;
   }
 }
 
-.FormErrorBottom {
+.Form_ErrorBottom {
   display: block;
 
   &_Message {
@@ -142,7 +142,7 @@ $arrowHeight: 1rem;
   }
 }
 
-.FormSubmitButton {
+.Form_SubmitButton {
   font-size: 1rem;
   background-color: #3497FF;
   color: white;

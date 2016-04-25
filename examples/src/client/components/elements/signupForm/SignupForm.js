@@ -20,12 +20,12 @@ const errorPropTypes = {
   message: React.PropTypes.string,
 };
 
-const FieldErrorRightContent = ({ message }) => (<span className="FormErrorRight">{message}</span>);
+const FieldErrorRightContent = ({ message }) => (<span className="Form_ErrorRight">{message}</span>);
 FieldErrorRightContent.propTypes = errorPropTypes;
 
 const FieldErrorBottomContent = ({ message }) => (
-  <div className="FormErrorBottom">
-    <div className="FormErrorBottom_Message">{message}</div>
+  <div className="Form_ErrorBottom">
+    <div className="Form_ErrorBottom_Message">{message}</div>
   </div>
 );
 FieldErrorBottomContent.propTypes = errorPropTypes;
@@ -53,115 +53,115 @@ const SignupForm = ({ form }) => {
   return (
     <div className="SignupForm">
       <h1 className="SignupForm-Title">SignupForm</h1>
-        <div className="FormField">
-          <div className="FormLabel">Email*</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Email*</div>
           <Input
-            className="FormTextInput"
+            className="Form_TextInput"
             fieldName="email"
             type="text"
           />
           <FieldErrorRight fieldName="email" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Debounced validation
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">UserName*</div>
+        <div className="Form_Field">
+          <div className="Form_Label">UserName*</div>
           <Input
-            className="FormTextInput"
+            className="Form_TextInput"
             fieldName="userName"
             type="text"
           />
           <FieldErrorRight fieldName="userName" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Remote api check for uniquness
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Credit Card Number*</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Credit Card Number*</div>
           <Input
-            className="FormTextInput"
+            className="Form_TextInput"
             fieldName="creditCardLongNumber"
             type="text"
           />
           <FieldErrorRight fieldName="creditCardLongNumber" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Value restriction and transformation
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Billing address line 1</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Billing address line 1</div>
           <Input
-            className="FormTextInput"
+            className="Form_TextInput"
             fieldName="billingAddressLine1"
             type="text"
           />
           <FieldErrorRight fieldName="billingAddressLine1" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Validity relating to prescence of other address fields
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Billing address line 2</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Billing address line 2</div>
           <Input
-            className="FormTextInput"
+            className="Form_TextInput"
             fieldName="billingAddressLine2"
             type="text"
           />
           <FieldErrorRight fieldName="billingAddressLine2" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Validity relating to prescence of other address fields
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Billing address postcode</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Billing address postcode</div>
           <Input
-            className="FormTextInput"
+            className="Form_TextInput"
             fieldName="billingAddressPostcode"
             type="text"
           />
           <FieldErrorRight fieldName="billingAddressPostcode" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Validity relating to prescence of other address fields
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Favourite Color</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Favourite Color</div>
           <Input
-            className="FormTextInput"
+            className="Form_TextInput"
             fieldName="favouriteColor"
             type="text"
           />
           <FieldErrorRight fieldName="favouriteColor" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Validates when populated but not required
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Tweet ({tweetRemainingChars})</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Tweet ({tweetRemainingChars})</div>
           <TextArea
-            className="FormTextArea"
+            className="Form_TextArea"
             fieldName="tweet"
             type="text"
           />
           <FieldErrorRight fieldName="tweet" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             TextArea with label containing manipulated value
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Gender*</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Gender*</div>
           <div>
             <Input
-              className="FormRadioButton"
+              className="Form_RadioButton"
               fieldName="gender"
               id="genderFemale"
               type="radio"
@@ -173,7 +173,7 @@ const SignupForm = ({ form }) => {
 
           <div>
             <Input
-              className="FormRadioButton"
+              className="Form_RadioButton"
               fieldName="gender"
               id="genderMale"
               type="radio"
@@ -183,45 +183,45 @@ const SignupForm = ({ form }) => {
             <label htmlFor="genderMale">Male</label>
           </div>
           <FieldErrorRight fieldName="gender" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Radio buttons
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Terms and conditions*</div>
+        <div className="Form_Field">
+          <div className="Form_Label">Terms and conditions*</div>
           <Input
-            className="FormCheckbox"
+            className="Form_Checkbox"
             fieldName="agreeTermsAndConditions"
             id="agreeTermsAndConditions"
             type="checkbox"
           />
-          <label className="FormCheckboxLabel" htmlFor="agreeTermsAndConditions">
+          <label className="Form_CheckboxLabel" htmlFor="agreeTermsAndConditions">
             I agree to something
           </label>
           <FieldErrorRight fieldName="agreeTermsAndConditions" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Checkbox with conditional validation
           </div>
         </div>
 
-        <div className="FormField">
-          <div className="FormLabel">Language*</div>
-          <Select className="FormSelect" fieldName="language">
+        <div className="Form_Field">
+          <div className="Form_Label">Language*</div>
+          <Select className="Form_Select" fieldName="language">
             {
               languagesWithCTA.map(language =>
                 <option key={language.id} value={language.id}>{language.name}</option>)
             }
           </Select>
           <FieldErrorRight fieldName="language" />
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Select with enforced selection
           </div>
         </div>
 
         <div>
           <SubmitButton
-            className="FormSubmitButton"
+            className="Form_SubmitButton"
             style={{ display: 'inline-block' }}
             tag="a"
             href="#"
@@ -230,7 +230,7 @@ const SignupForm = ({ form }) => {
               console.log('Submit!'); // eslint-disable-line
             }}
           >Submit</SubmitButton>
-          <div className="FormExplanation">
+          <div className="Form_FieldExplanation">
             Submit button becomes clickable when the whole form is valid
           </div>
         </div>
