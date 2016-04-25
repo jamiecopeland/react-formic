@@ -7,10 +7,10 @@ import NotFound from './components/screens/notFound/NotFound';
 
 
 // Shim form pages
-import SignInForm from './components/elements/signInForm/SignInForm';
+import NewsletterSignUpForm from './components/elements/newsletterSignUpForm/NewsletterSignUpForm';
 import SignUpForm from './components/elements/signUpForm/SignUpForm';
 
-const SignInScreen = () => (<SignInForm />);
+const NewsletterSignUpScreen = () => (<NewsletterSignUpForm />);
 const SignUpScreen = () => (<SignUpForm />);
 
 export function createRoutes(store) {
@@ -21,7 +21,7 @@ export function createRoutes(store) {
   return (
     <Router history={history}>
       <Route path="/" component={Root}>
-        <Route path="sign-in" component={SignInScreen} />
+        <Route path="newsletter-sign-up" component={NewsletterSignUpScreen} />
         <Route path="sign-up" component={SignUpScreen} />
         <Route path="*" component={NotFound} />
       </Route>

@@ -1,6 +1,6 @@
 @import '../../../styles/variables.css';
 
-.SignInForm {
+.NewsletterSignUpForm {
   padding: 1rem 1rem 2rem 1rem;
 
   &-Title {

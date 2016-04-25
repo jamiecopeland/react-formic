@@ -11,7 +11,7 @@ import {
 import { connectLocalState } from 'react-formic/lib/stateWrappers/localStateWrapper';
 
 import '../../../styles/form.css';
-import './SignInForm.css';
+import './NewsletterSignUpForm.css';
 
 const { INVALID, VALID } = validity;
 const { CHECKED } = checkboxStates;
@@ -42,9 +42,9 @@ const formConfig = {
   },
 };
 
-const SignInForm = () => (
-  <div className="SignInForm">
-    <h1 className="SignInForm-Title">Join the dark side!</h1>
+const NewsletterSignUpForm = () => (
+  <div className="NewsletterSignUpForm">
+    <h1 className="NewsletterSignUpForm-Title">Join the dark side!</h1>
     <div className="Form_Field">
       <div className="Form_Label">Email*</div>
       <Input
@@ -69,14 +69,13 @@ const SignInForm = () => (
       <ErrorMessage className="Form_ErrorRight" fieldName="recieveDarkSideEmail" />
     </div>
     <SubmitButton
-      className="Form_SubmitButton SignInForm_SubmitButton"
+      className="Form_SubmitButton NewsletterSignUpForm_SubmitButton"
       href="#"
       onClick={event => {
-        event.preventDefault();
         console.log('Submit!'); // eslint-disable-line
       }}
     >Submit</SubmitButton>
   </div>
 );
 
-export default initialize(formConfig)(SignInForm);
+export default initialize(formConfig)(NewsletterSignUpForm);
