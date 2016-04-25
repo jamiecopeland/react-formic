@@ -1,5 +1,17 @@
 @import './variables.css';
 
+$fieldHeight: 2rem;
+$arrowWidth: 1rem;
+$arrowHeight: 1rem;
+
+@define-placeholder FormTextBase {
+  font-size: 1rem;
+  border: solid 1px #CFCFCF;
+  background-color: #fafafa;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
 .Form_Field {
   margin: 0 0 1.5rem;
 }
@@ -10,32 +22,10 @@
   height: 1rem;
 }
 
-$fieldHeight: 2rem;
-$arrowWidth: 1rem;
-$arrowHeight: 1rem;
-
-
-@define-placeholder FormTextBase {
-  font-size: 1rem;
-  border: solid 1px #CFCFCF;
-  background-color: #fafafa;
-  outline: none;
-  transition: all 0.2s ease-in-out;
-}
-
 .Form_FieldExplanation {
   color: #999;
   font-size: 0.75rem;
   margin-top: 0.45rem;
-  /*
-  &:before {
-    content: '[ ';
-  }
-
-  &:after {
-    content: ' ]';
-  }
-  */
 }
 
 .Form_TextInput {
@@ -90,7 +80,6 @@ $arrowHeight: 1rem;
   font-size: 1rem;
   line-height: 2rem;
   padding: 1rem;
-  // height: 3rem;
   border: solid 1px #CFCFCF;
 }
 
@@ -129,19 +118,6 @@ $arrowHeight: 1rem;
   }
 }
 
-.Form_ErrorBottom {
-  display: block;
-
-  &_Message {
-    background-color: $colorRedInvalid;
-    color: white;
-    display: inline-block;
-    line-height: $fieldHeight;
-    padding-left: 0.7rem;
-    padding-right: 0.7rem;
-  }
-}
-
 .Form_SubmitButton {
   font-size: 1rem;
   background-color: #3497FF;
@@ -151,7 +127,6 @@ $arrowHeight: 1rem;
   text-decoration: none;
 
   &.valid {
-
   }
 
   &.invalid {
@@ -159,6 +134,5 @@ $arrowHeight: 1rem;
   }
 
   &.pending {
-
   }
 }

@@ -8,12 +8,39 @@ import {
   validity,
   checkboxStates,
 } from 'react-formic';
-import { connectLocalState } from 'react-formic/lib/stateWrappers/localStateWrapper'; // eslint-disable-line
+import { connectLocalState } from 'react-formic/lib/stateWrappers/localStateWrapper';
+
+import '../../../styles/form.css';
+import './SignInForm.css';
 
 const { INVALID, VALID } = validity;
 const { CHECKED } = checkboxStates;
 
-import './SignInForm.css';
+const formConfig = {
+  stateWrapper: connectLocalState,
+  fields: {
+    email: {
+      isRequired: true,
+      valueStream: valueStream => valueStream
+        .startWith('darth@deathstar.com')
+        .map(value => value.toLowerCase()),
+      validationStream: valueStream => valueStream
+        .debounce(300)
+        .map(value => ({
+          validity: value && isEmail(value) ? VALID : INVALID,
+          validityMessage: 'Must be a valid email',
+        })),
+    },
+    recieveDarkSideEmail: {
+      isRequired: true,
+      validationStream: valueStream => valueStream
+        .map(value => ({
+          validity: value === CHECKED ? VALID : INVALID,
+          validityMessage: 'Tick it or die!',
+        })),
+    },
+  },
+};
 
 const SignInForm = () => (
   <div className="SignInForm">
@@ -54,30 +81,4 @@ const SignInForm = () => (
   </div>
 );
 
-const config = {
-  stateWrapper: connectLocalState,
-  fields: {
-    email: {
-      isRequired: true,
-      valueStream: valueStream => valueStream
-        .startWith('darth@deathstar.com')
-        .map(value => value.toLowerCase()),
-      validationStream: valueStream => valueStream
-        .debounce(300)
-        .map(value => ({
-          validity: value && isEmail(value) ? VALID : INVALID,
-          validityMessage: 'Must be a valid email',
-        })),
-    },
-    recieveDarkSideEmail: {
-      isRequired: true,
-      validationStream: valueStream => valueStream
-        .map(value => ({
-          validity: value === CHECKED ? VALID : INVALID,
-          validityMessage: 'Tick it!',
-        })),
-    },
-  },
-};
-
-export default initialize(config)(SignInForm);
+export default initialize(formConfig)(SignInForm);
