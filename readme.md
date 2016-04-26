@@ -40,7 +40,7 @@ import {
   ErrorMessage,
   Input,
   SubmitButton,
-	initialize,
+  initialize,
   validity,
   checkboxStates,
 } from 'react-formic';
@@ -84,7 +84,7 @@ const SignUpForm = () => (
     />
     <ErrorMessage fieldName="email" />
 
-		<h2>Confirmation*</h2>
+    <h2>Confirmation*</h2>
     <Input
       fieldName="receiveDarkSideEmail"
       id="receiveDarkSideEmail"
