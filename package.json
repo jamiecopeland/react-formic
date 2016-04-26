@@ -1,6 +1,6 @@
 {
   "name": "react-formic",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "A React form library with RxJS validation streams ",
   "main": "lib/index.js",
   "scripts": {
