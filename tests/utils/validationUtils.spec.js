@@ -1,8 +1,8 @@
 import 'babel-polyfill';
 import { expect } from 'chai';
 
-import { INVALID, VALID } from '../constants/validity';
-import { validate } from './validationUtils';
+import { INVALID, VALID } from '../../src/constants/validity';
+import { validate } from '../../src/utils/validationUtils';
 
 describe('validationUtils', () => {
   describe('validate', () => {

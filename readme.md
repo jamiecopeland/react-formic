@@ -23,16 +23,24 @@ If you're unfamiliar with RxJS and functional reactive programming, make sure to
 
 ##Quick start
 
-More documentation is on the way, but for now take a look at the simple implementation below or for a more involved example, clone the project and run the examples application.
+More documentation is on the way, but for now the quickest way to get going is to clone the repo and take a look at the examples app.
+
+Install via NPM:
+
+```
+npm install react-formic
+```
+
+And a snippet showing how to construct a simple form:
 
 ```js
 import React from 'react';
 import { isEmail } from 'validator';
 import {
-  initialize,
   ErrorMessage,
   Input,
   SubmitButton,
+	initialize,
   validity,
   checkboxStates,
 } from 'react-formic';

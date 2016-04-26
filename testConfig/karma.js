@@ -13,10 +13,10 @@ module.exports = config => {
     frameworks: ['mocha'],
     files: [
       './node_modules/phantomjs-polyfill/bind-polyfill.js',
-      './test/tests.webpack.js',
+      './testConfig/tests.webpack.js',
     ],
     preprocessors: {
-      './test/tests.webpack.js': ['webpack', 'sourcemap'],
+      './testConfig/tests.webpack.js': ['webpack', 'sourcemap'],
     },
     reporters: ['mocha'],
     plugins: [

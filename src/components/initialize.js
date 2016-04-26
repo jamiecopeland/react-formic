@@ -139,7 +139,7 @@ function initialize(config, mapFormToProps = defaultMapFormToProps) {
         this.triggerFieldMap = createTriggerFieldMap(fields);
 
         // Only create an empty formState if one doesn't already exist. State can persist after a
-        // form unmounts if the reduxPersistenceWrapper is being used.
+        // form unmounts if the reduxStateWrapper is being used.
         if (!formState) {
           initializeForm({ form: createEmptyForm(fields), formName: name });
         }

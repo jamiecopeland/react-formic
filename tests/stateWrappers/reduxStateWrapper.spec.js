@@ -1,11 +1,11 @@
 import chai, { expect } from 'chai';
-import { Map, is } from 'immutable';
+import { Map } from 'immutable';
 import chaiImmutable from 'chai-immutable';
 import purdy from 'purdy';
 
 chai.use(chaiImmutable);
 
-import { Field, Form, Formic } from '../data/stateTypes';
+import { Field, Form, Formic } from '../../src/data/stateTypes';
 import {
   DELETE_FORM,
   INITIALIZE_FORM,
@@ -13,8 +13,8 @@ import {
   SET_FORM_FIELDS,
 
   formicReducer,
-} from './reduxPersistenceWrapper';
-import { INVALID, VALID } from '../constants/validity';
+} from '../../src/stateWrappers/reduxStateWrapper';
+import { INVALID, VALID } from '../../src/constants/validity';
 
 const stateEmpty = new Formic();
 const statePopulated = new Formic({
