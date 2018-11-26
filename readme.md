@@ -1,11 +1,13 @@
+_NOTE: This is very alpha, so not for use in production._
+
 # React Formic
 Asynchronous form validation made easy.
 
-##The problem
+## The problem
 
 As soon as an application moves beyond simple asynchronous flows, callbacks and Promises start to struggle. This point arrives fairly quickly when trying to perfom complex form validations involving debouncing or server-side validation, with code quickly turning into hard to fathom spaghetti.
 
-##The solution
+## The solution
 
 [RxJS](https://github.com/Reactive-Extensions/RxJS) provides a rich and mature API for dealing with asynchronicity in JavaScript. For example, the two problems mentioned above can be solved in three extremely clear and declarative lines:
 
@@ -21,7 +23,7 @@ React Formic provides a way to leverage the features of RxJS in this problem spa
 
 If you're unfamiliar with RxJS and functional reactive programming, make sure to check out this [excellent introduction](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) by Andre Staltz, author of [Cycle.js](http://cycle.js.org/).
 
-##Quick start
+## Quick start
 
 More documentation is on the way, but for now the quickest way to get going is to clone the repo and take a look at the examples app.
 
@@ -105,7 +107,7 @@ const SignUpForm = () => (
 export default initialize(config)(SignUpForm);
 ```
 
-##Roadmap
+## Roadmap
 * Write documentation
 * Add more extensive tests
 * Some more exciting things
